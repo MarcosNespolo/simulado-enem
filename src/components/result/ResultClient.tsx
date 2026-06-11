@@ -397,7 +397,7 @@ export default function ResultClient() {
             <div className="mt-4 flex items-center gap-3 rounded-xl bg-emerald-50 p-4 text-emerald-800">
               <Trophy className="h-6 w-6 shrink-0" aria-hidden />
               <p className="text-sm leading-relaxed">
-                Você não errou nenhuma questão — gabaritou! Aumente o número de
+                Você não errou nenhuma questão: gabaritou! Aumente o número de
                 questões ou inclua mais áreas no próximo simulado.
               </p>
             </div>

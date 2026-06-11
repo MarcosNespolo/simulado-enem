@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "Simulado ENEM — questões oficiais das últimas provas",
+    default: "Simulado ENEM: questões oficiais das últimas provas",
     template: "%s · Simulado ENEM",
   },
   description:
