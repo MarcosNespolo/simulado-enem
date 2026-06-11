@@ -25,7 +25,8 @@ function buildTopicCounts(): Record<Discipline, TopicCount[]> {
   for (const area of AREA_ORDER) {
     result[area] = listTopics(area)
       .map((topic) => ({ topic, count: counts[area][topic] ?? 0 }))
-      .filter((t) => t.count > 0);
+      .filter((t) => t.count > 0)
+      .sort((a, b) => b.count - a.count);
   }
   return result;
 }
