@@ -172,7 +172,7 @@ export default function TemaClient({ tema }: { tema: TemaTreino }) {
                     >
                       {paragrafo.rotulo}
                     </span>
-                    <p className="text-justify text-[15px] leading-[1.85] text-zinc-700">
+                    <p className="text-[15px] leading-[1.85] text-zinc-700">
                       <TextoComDestaques
                         texto={paragrafo.texto}
                         destaques={paragrafo.destaques}

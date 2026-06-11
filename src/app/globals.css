@@ -18,21 +18,22 @@
   /*
    * Conforto de leitura é prioridade: o usuário passa horas lendo enunciados.
    * Por isso o fundo não é preto absoluto, o texto corrido nunca é branco
-   * puro e todos os acentos (primária e cores de área) são dessaturados.
+   * puro, a escala neutra é levemente quente (estilo "papel e tinta", menos
+   * cansativa que cinza-azulado) e os acentos são dessaturados.
    */
-  --color-surface: #1a1a1f;
+  --color-surface: #1b1a18;
 
-  --color-zinc-50: #101014;
-  --color-zinc-100: #232329;
-  --color-zinc-200: #313138;
-  --color-zinc-300: #484851;
-  --color-zinc-400: #82828c;
-  --color-zinc-500: #9a9aa4;
-  --color-zinc-600: #b3b3bc;
-  --color-zinc-700: #c8c8cf;
-  --color-zinc-800: #d9d9df;
-  --color-zinc-900: #e7e7eb;
-  --color-zinc-950: #f5f5f7;
+  --color-zinc-50: #100f0e;
+  --color-zinc-100: #242220;
+  --color-zinc-200: #32302c;
+  --color-zinc-300: #4a4742;
+  --color-zinc-400: #8a857d;
+  --color-zinc-500: #a19c94;
+  --color-zinc-600: #b8b3ab;
+  --color-zinc-700: #ccc8c1;
+  --color-zinc-800: #ddd9d3;
+  --color-zinc-900: #eae6e0;
+  --color-zinc-950: #f6f3ee;
 
   --color-indigo-50: #1e1e30;
   --color-indigo-100: #272745;
@@ -105,12 +106,12 @@ html {
 body {
   font-family: var(--font-sans), system-ui, -apple-system, sans-serif;
   text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
 }
 
 /* Conteúdo das questões (markdown vindo da prova) */
 .question-content {
-  line-height: 1.75;
+  font-size: 1.0625rem;
+  line-height: 1.8;
   color: var(--color-zinc-800);
   overflow-wrap: break-word;
 }
