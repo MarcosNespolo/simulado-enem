@@ -1,0 +1,95 @@
+export type Discipline =
+  | "linguagens"
+  | "ciencias-humanas"
+  | "ciencias-natureza"
+  | "matematica";
+
+export type Language = "ingles" | "espanhol";
+
+export type Letter = "A" | "B" | "C" | "D" | "E";
+
+export interface Alternative {
+  letter: Letter;
+  text: string | null;
+  file: string | null;
+}
+
+export interface Question {
+  id: string;
+  year: number;
+  index: number;
+  discipline: Discipline;
+  language: Language | null;
+  context: string;
+  files: string[];
+  alternativesIntroduction: string;
+  correctAlternative: Letter;
+  alternatives: Alternative[];
+}
+
+/** Questão dentro de um simulado, com numeração sequencial própria. */
+export interface SimuladoQuestion extends Question {
+  number: number;
+}
+
+export interface SimuladoConfig {
+  counts: Record<Discipline, number>;
+  language: Language;
+  timerEnabled: boolean;
+}
+
+export type SimuladoStatus = "in-progress" | "finished";
+
+export interface Simulado {
+  id: string;
+  createdAt: string;
+  config: SimuladoConfig;
+  questions: SimuladoQuestion[];
+  answers: Record<number, Letter>;
+  flagged: number[];
+  currentIndex: number;
+  elapsedSeconds: number;
+  totalSeconds: number; // limite quando config.timerEnabled
+  status: SimuladoStatus;
+}
+
+export interface AreaResult {
+  discipline: Discipline;
+  total: number;
+  correct: number;
+  wrong: number;
+  blank: number;
+}
+
+export interface Recommendation {
+  discipline: Discipline;
+  topic: string;
+  missed: number;
+  total: number;
+  hint: string;
+}
+
+export interface SimuladoResult {
+  id: string;
+  finishedAt: string;
+  durationSeconds: number;
+  timedOut: boolean;
+  config: SimuladoConfig;
+  total: number;
+  correct: number;
+  wrong: number;
+  blank: number;
+  perArea: AreaResult[];
+  recommendations: Recommendation[];
+  questions: SimuladoQuestion[];
+  answers: Record<number, Letter>;
+}
+
+export interface HistoryEntry {
+  id: string;
+  finishedAt: string;
+  total: number;
+  correct: number;
+  durationSeconds: number;
+  perArea: { discipline: Discipline; total: number; correct: number }[];
+}

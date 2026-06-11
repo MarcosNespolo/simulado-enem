@@ -1,0 +1,68 @@
+{
+  "generatedAt": "2026-06-11T15:51:11.568Z",
+  "source": "https://enem.dev",
+  "years": [
+    2019,
+    2020,
+    2021,
+    2022,
+    2023
+  ],
+  "counts": {
+    "2019": {
+      "total": 183,
+      "kept": 166,
+      "dropped": 17,
+      "byDiscipline": {
+        "linguagens": 37,
+        "ciencias-humanas": 45,
+        "ciencias-natureza": 39,
+        "matematica": 45
+      }
+    },
+    "2020": {
+      "total": 184,
+      "kept": 181,
+      "dropped": 3,
+      "byDiscipline": {
+        "linguagens": 47,
+        "ciencias-humanas": 49,
+        "ciencias-natureza": 45,
+        "matematica": 40
+      }
+    },
+    "2021": {
+      "total": 188,
+      "kept": 185,
+      "dropped": 3,
+      "byDiscipline": {
+        "linguagens": 44,
+        "ciencias-humanas": 58,
+        "ciencias-natureza": 40,
+        "matematica": 43
+      }
+    },
+    "2022": {
+      "total": 188,
+      "kept": 186,
+      "dropped": 2,
+      "byDiscipline": {
+        "linguagens": 48,
+        "ciencias-humanas": 50,
+        "ciencias-natureza": 44,
+        "matematica": 44
+      }
+    },
+    "2023": {
+      "total": 186,
+      "kept": 139,
+      "dropped": 47,
+      "byDiscipline": {
+        "linguagens": 36,
+        "ciencias-humanas": 38,
+        "ciencias-natureza": 23,
+        "matematica": 42
+      }
+    }
+  }
+}

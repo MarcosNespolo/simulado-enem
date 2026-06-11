@@ -1,36 +1,58 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Simulado ENEM
 
-## Getting Started
+Simulados gratuitos com **questões oficiais do ENEM (2019–2023)**, sem login e sem cadastro. Monte a prova do seu jeito, responda no ritmo do exame e receba um diagnóstico do que estudar.
 
-First, run the development server:
+## Funcionalidades
+
+- **Simulado rápido**: 20 questões de todas as áreas em um clique.
+- **Simulado personalizado**: escolha as áreas (Linguagens, Humanas, Natureza, Matemática), a quantidade de questões por área (até 45, como na prova real) e o idioma da língua estrangeira (inglês ou espanhol).
+- **Cronômetro opcional** no ritmo da prova (3 min por questão), com pausa e encerramento automático.
+- **Experiência de prova**: navegação entre questões, mapa de questões por área, marcação para revisão, atalhos de teclado (A–E respondem, ← → navegam, F marca, M abre o mapa).
+- **Progresso salvo no navegador**: feche a aba e continue depois (localStorage, sem servidor).
+- **Resultado com diagnóstico**: desempenho geral e por área, revisão completa com gabarito e **recomendações de estudo por assunto** com base nos seus erros.
+- **Histórico** dos últimos resultados.
+
+## Stack
+
+- [Next.js](https://nextjs.org) (App Router) + React + TypeScript
+- Tailwind CSS v4
+- Questões via [enem.dev](https://enem.dev) (API pública e open source), baixadas para JSON estático em `src/data/questions/`
+
+## Rodando localmente
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Abra [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Atualizando as questões
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+As questões ficam versionadas no repositório. Para baixar de novo (ou incluir mais anos):
 
-## Learn More
+```bash
+# 5 anos mais recentes disponíveis na API
+node scripts/fetch-questions.mjs
 
-To learn more about Next.js, take a look at the following resources:
+# ou um intervalo específico
+node scripts/fetch-questions.mjs 2015 2023
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Ao adicionar anos novos, registre os imports correspondentes em `src/lib/pool.ts`. Questões com falha de parsing na fonte (sem enunciado ou sem gabarito) são descartadas automaticamente.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Estrutura
 
-## Deploy on Vercel
+```
+src/
+  app/                  # páginas (home, /simulado, /resultado) e API
+  components/           # home, quiz, resultado, markdown
+  lib/                  # tipos, gerador, pontuação, tópicos de estudo, storage
+  data/questions/       # JSONs das provas (gerados pelo script)
+scripts/
+  fetch-questions.mjs   # download das questões da enem.dev
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Aviso
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Projeto de estudo independente, sem vínculo com INEP ou MEC. As notas exibidas são percentuais de acerto simples (a nota TRI oficial do ENEM não é calculada). Os dados do usuário ficam apenas no navegador.
