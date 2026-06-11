@@ -36,6 +36,8 @@ export interface SimuladoConfig {
   counts: Record<Discipline, number>;
   language: Language;
   timerEnabled: boolean;
+  /** Filtro do modo avançado: tópicos selecionados por área (ausente/vazio = todos). */
+  topics?: Partial<Record<Discipline, string[]>>;
 }
 
 export type SimuladoStatus = "in-progress" | "finished";

@@ -2,13 +2,31 @@ import { NextResponse } from "next/server";
 import { POOL } from "@/lib/pool";
 import { generateSimulado } from "@/lib/generator";
 import { AREA_ORDER, MAX_PER_AREA } from "@/lib/areas";
+import { listTopics } from "@/lib/topics";
 import type { Discipline, Language, SimuladoConfig } from "@/lib/types";
 
 const LANGUAGES: Language[] = ["ingles", "espanhol"];
 
+function parseTopics(raw: unknown): SimuladoConfig["topics"] | null {
+  if (raw === undefined || raw === null) return undefined;
+  if (typeof raw !== "object") return null;
+  const parsed: Partial<Record<Discipline, string[]>> = {};
+  for (const area of AREA_ORDER) {
+    const list = (raw as Record<string, unknown>)[area];
+    if (list === undefined) continue;
+    if (!Array.isArray(list) || list.length > 30) return null;
+    const valid = listTopics(area);
+    const topics = list.filter(
+      (t): t is string => typeof t === "string" && valid.includes(t)
+    );
+    if (topics.length > 0) parsed[area] = topics;
+  }
+  return parsed;
+}
+
 function parseConfig(body: unknown): SimuladoConfig | null {
   if (typeof body !== "object" || body === null) return null;
-  const { counts, language, timerEnabled } = body as Record<string, unknown>;
+  const { counts, language, timerEnabled, topics } = body as Record<string, unknown>;
 
   if (typeof counts !== "object" || counts === null) return null;
   const parsedCounts = {} as Record<Discipline, number>;
@@ -26,7 +44,15 @@ function parseConfig(body: unknown): SimuladoConfig | null {
   if (!LANGUAGES.includes(language as Language)) return null;
   if (typeof timerEnabled !== "boolean") return null;
 
-  return { counts: parsedCounts, language: language as Language, timerEnabled };
+  const parsedTopics = parseTopics(topics);
+  if (parsedTopics === null) return null;
+
+  return {
+    counts: parsedCounts,
+    language: language as Language,
+    timerEnabled,
+    ...(parsedTopics && Object.keys(parsedTopics).length > 0 ? { topics: parsedTopics } : {}),
+  };
 }
 
 export async function POST(request: Request) {

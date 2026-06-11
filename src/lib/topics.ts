@@ -244,6 +244,11 @@ const TOPICS: Record<Discipline, TopicDef[]> = {
   ],
 };
 
+/** Lista de tópicos de uma área, na ordem didática da taxonomia. */
+export function listTopics(discipline: Discipline): string[] {
+  return TOPICS[discipline].map((t) => t.topic);
+}
+
 const FALLBACK_TOPIC: Record<Discipline, string> = {
   linguagens: "Interpretação de texto",
   "ciencias-humanas": "História geral",
@@ -277,6 +282,18 @@ export function tagQuestion(q: Question): string {
     }
   }
   return best?.topic ?? FALLBACK_TOPIC[q.discipline];
+}
+
+const topicCache = new Map<string, string>();
+
+/** tagQuestion com cache por id (a classificação por regex não é gratuita). */
+export function topicOfCached(q: Question): string {
+  let topic = topicCache.get(q.id);
+  if (topic === undefined) {
+    topic = tagQuestion(q);
+    topicCache.set(q.id, topic);
+  }
+  return topic;
 }
 
 function hintFor(discipline: Discipline, topic: string): string {

@@ -5,8 +5,10 @@ import { useRouter } from "next/navigation";
 import {
   AlertTriangle,
   Check,
+  ChevronDown,
   History,
   Languages,
+  ListFilter,
   Loader2,
   Minus,
   Play,
@@ -26,6 +28,11 @@ import type {
 import { AREA_ORDER, AREAS, MAX_PER_AREA, SECONDS_PER_QUESTION, formatDuration } from "@/lib/areas";
 import { clearCurrent, clearHistory, loadCurrent, loadHistory, saveCurrent } from "@/lib/storage";
 
+export interface TopicCount {
+  topic: string;
+  count: number;
+}
+
 const PRESETS = [20, 40, 90, 180];
 
 const DEFAULT_COUNTS: Record<Discipline, number> = {
@@ -33,6 +40,13 @@ const DEFAULT_COUNTS: Record<Discipline, number> = {
   "ciencias-humanas": 5,
   "ciencias-natureza": 5,
   matematica: 5,
+};
+
+const NO_TOPICS: Record<Discipline, string[]> = {
+  linguagens: [],
+  "ciencias-humanas": [],
+  "ciencias-natureza": [],
+  matematica: [],
 };
 
 function makeId(): string {
@@ -71,9 +85,11 @@ function formatDate(iso: string): string {
 export default function HomeClient({
   years,
   totalQuestions,
+  topicCounts,
 }: {
   years: number[];
   totalQuestions: number;
+  topicCounts: Record<Discipline, TopicCount[]>;
 }) {
   const router = useRouter();
   const [mounted, setMounted] = useState(false);
@@ -89,8 +105,51 @@ export default function HomeClient({
   const [counts, setCounts] = useState<Record<Discipline, number>>(DEFAULT_COUNTS);
   const [language, setLanguage] = useState<Language>("ingles");
   const [timerEnabled, setTimerEnabled] = useState(true);
+  const [topics, setTopics] = useState<Record<Discipline, string[]>>(NO_TOPICS);
+  const [topicsOpen, setTopicsOpen] = useState<Record<Discipline, boolean>>({
+    linguagens: false,
+    "ciencias-humanas": false,
+    "ciencias-natureza": false,
+    matematica: false,
+  });
   const [generating, setGenerating] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  /** Máximo de questões da área respeitando o filtro de conteúdo. */
+  function maxFor(area: Discipline): number {
+    const all = topicCounts[area];
+    const selected = topics[area];
+    const available =
+      selected.length === 0
+        ? all.reduce((acc, t) => acc + t.count, 0)
+        : all.reduce((acc, t) => acc + (selected.includes(t.topic) ? t.count : 0), 0);
+    return Math.min(MAX_PER_AREA, available);
+  }
+
+  function toggleTopic(area: Discipline, topic: string) {
+    setTopics((prev) => {
+      const list = prev[area].includes(topic)
+        ? prev[area].filter((t) => t !== topic)
+        : [...prev[area], topic];
+      const next = { ...prev, [area]: list };
+
+      // Reaproveita o cálculo de maxFor com a seleção nova para não deixar
+      // o stepper acima do disponível.
+      const all = topicCounts[area];
+      const available =
+        list.length === 0
+          ? all.reduce((acc, t) => acc + t.count, 0)
+          : all.reduce((acc, t) => acc + (list.includes(t.topic) ? t.count : 0), 0);
+      const cap = Math.max(1, Math.min(MAX_PER_AREA, available));
+      setCounts((c) => (c[area] > cap ? { ...c, [area]: cap } : c));
+
+      return next;
+    });
+  }
+
+  function clearTopics(area: Discipline) {
+    setTopics((prev) => ({ ...prev, [area]: [] }));
+  }
 
   useEffect(() => {
     // Carga única do localStorage após a hidratação; o re-render é intencional.
@@ -158,8 +217,20 @@ export default function HomeClient({
 
   function generateCustom() {
     const effective = { ...counts };
-    for (const area of AREA_ORDER) if (!enabled[area]) effective[area] = 0;
-    void generate({ counts: effective, language, timerEnabled });
+    const selectedTopics: Partial<Record<Discipline, string[]>> = {};
+    for (const area of AREA_ORDER) {
+      if (!enabled[area]) {
+        effective[area] = 0;
+        continue;
+      }
+      if (topics[area].length > 0) selectedTopics[area] = topics[area];
+    }
+    void generate({
+      counts: effective,
+      language,
+      timerEnabled,
+      ...(Object.keys(selectedTopics).length > 0 ? { topics: selectedTopics } : {}),
+    });
   }
 
   function applyPreset(presetTotal: number) {
@@ -172,7 +243,11 @@ export default function HomeClient({
         matematica: true,
       });
     }
-    setCounts(distribute(presetTotal, areas));
+    const distributed = distribute(presetTotal, areas);
+    for (const area of areas) {
+      distributed[area] = Math.max(1, Math.min(distributed[area], maxFor(area)));
+    }
+    setCounts(distributed);
   }
 
   function toggleArea(area: Discipline) {
@@ -180,9 +255,10 @@ export default function HomeClient({
   }
 
   function step(area: Discipline, delta: number) {
+    const cap = Math.max(1, maxFor(area));
     setCounts((prev) => ({
       ...prev,
-      [area]: Math.min(MAX_PER_AREA, Math.max(1, prev[area] + delta)),
+      [area]: Math.min(cap, Math.max(1, prev[area] + delta)),
     }));
   }
 
@@ -294,14 +370,20 @@ export default function HomeClient({
                   {AREA_ORDER.map((area) => {
                     const style = AREAS[area];
                     const isOn = enabled[area];
+                    const areaTopics = topicCounts[area];
+                    const selectedTopics = topics[area];
+                    const isFiltered = selectedTopics.length > 0;
+                    const open = topicsOpen[area];
+                    const cap = Math.max(1, maxFor(area));
                     return (
                       <div
                         key={area}
                         className={cx(
-                          "flex items-center gap-3 rounded-xl border p-3 transition",
+                          "rounded-xl border transition",
                           isOn ? "border-zinc-200 bg-surface" : "border-zinc-100 bg-zinc-50"
                         )}
                       >
+                        <div className="flex items-center gap-3 p-3">
                         <button
                           type="button"
                           role="checkbox"
@@ -354,13 +436,76 @@ export default function HomeClient({
                           <button
                             type="button"
                             onClick={() => step(area, 1)}
-                            disabled={counts[area] >= MAX_PER_AREA}
+                            disabled={counts[area] >= cap}
                             aria-label={`Aumentar questões de ${style.short}`}
                             className="flex h-7 w-7 items-center justify-center rounded-md text-zinc-500 transition hover:bg-zinc-100 disabled:opacity-40"
                           >
                             <Plus className="h-4 w-4" aria-hidden />
                           </button>
                         </div>
+                        </div>
+
+                        {/* Modo avançado: filtro por conteúdo */}
+                        {isOn && (
+                          <div className="border-t border-zinc-100 px-3 py-2">
+                            <button
+                              type="button"
+                              onClick={() =>
+                                setTopicsOpen((prev) => ({ ...prev, [area]: !prev[area] }))
+                              }
+                              aria-expanded={open}
+                              className="flex w-full items-center gap-1.5 rounded-md py-0.5 text-xs font-medium text-zinc-500 transition hover:text-zinc-700"
+                            >
+                              <ListFilter className="h-3.5 w-3.5" aria-hidden />
+                              {isFiltered
+                                ? `${selectedTopics.length} de ${areaTopics.length} conteúdos · máx. ${cap} questões`
+                                : "Todos os conteúdos"}
+                              <ChevronDown
+                                className={cx("h-3.5 w-3.5 transition-transform", open && "rotate-180")}
+                                aria-hidden
+                              />
+                            </button>
+                            {open && (
+                              <div className="mt-2 flex flex-wrap gap-1.5 pb-1 animate-fade-in">
+                                <button
+                                  type="button"
+                                  onClick={() => clearTopics(area)}
+                                  aria-pressed={!isFiltered}
+                                  className={cx(
+                                    "h-7 rounded-full border px-3 text-xs font-medium transition",
+                                    !isFiltered
+                                      ? "border-indigo-300 bg-indigo-50 text-indigo-700"
+                                      : "border-zinc-200 text-zinc-500 hover:border-zinc-300 hover:text-zinc-700"
+                                  )}
+                                >
+                                  Todos
+                                </button>
+                                {areaTopics.map(({ topic, count }) => {
+                                  const isSelected = selectedTopics.includes(topic);
+                                  return (
+                                    <button
+                                      key={topic}
+                                      type="button"
+                                      onClick={() => toggleTopic(area, topic)}
+                                      aria-pressed={isSelected}
+                                      className={cx(
+                                        "h-7 rounded-full border px-3 text-xs font-medium transition",
+                                        isSelected
+                                          ? "border-indigo-300 bg-indigo-50 text-indigo-700"
+                                          : "border-zinc-200 text-zinc-500 hover:border-zinc-300 hover:text-zinc-700"
+                                      )}
+                                    >
+                                      {topic}
+                                      <span className={cx("ml-1", isSelected ? "text-indigo-400" : "text-zinc-400")}>
+                                        {count}
+                                      </span>
+                                    </button>
+                                  );
+                                })}
+                              </div>
+                            )}
+                          </div>
+                        )}
                       </div>
                     );
                   })}
@@ -447,8 +592,17 @@ export default function HomeClient({
                 <ul className="mt-3 space-y-1.5 text-sm text-zinc-600">
                   {activeAreas.map((area) => (
                     <li key={area} className="flex items-center gap-2">
-                      <span className={cx("h-2 w-2 rounded-full", AREAS[area].dot)} aria-hidden />
-                      <span className="flex-1">{AREAS[area].short}</span>
+                      <span className={cx("h-2 w-2 shrink-0 rounded-full", AREAS[area].dot)} aria-hidden />
+                      <span className="min-w-0 flex-1 truncate">
+                        {AREAS[area].short}
+                        {topics[area].length > 0 && (
+                          <span className="text-xs text-zinc-400">
+                            {" "}
+                            · {topics[area].length}{" "}
+                            {topics[area].length === 1 ? "conteúdo" : "conteúdos"}
+                          </span>
+                        )}
+                      </span>
                       <span className="font-medium tabular-nums text-zinc-900">{counts[area]}</span>
                     </li>
                   ))}
