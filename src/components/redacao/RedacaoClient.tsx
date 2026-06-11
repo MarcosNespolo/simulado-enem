@@ -1,11 +1,14 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import {
   AlertTriangle,
+  ArrowRight,
   Check,
   ChevronDown,
   Copy,
+  PenLine,
   RotateCcw,
   Sparkles,
   X,
@@ -18,6 +21,7 @@ import {
   PROMPT_CORRECAO_IA,
   QUIZ_REDACAO,
   TEMAS_ANTERIORES,
+  TEMAS_TREINO,
   type Competencia,
 } from "@/data/redacao";
 
@@ -317,6 +321,7 @@ const SECTIONS = [
   ["correcao", "Quem corrige"],
   ["temas", "Temas anteriores"],
   ["quiz", "Quiz"],
+  ["treinar", "Treinar com temas"],
   ["ia", "Corrigir com IA"],
 ] as const;
 
@@ -439,6 +444,50 @@ export default function RedacaoClient() {
           perde pontos por não conhecer essas regras.
         </p>
         <QuizRedacao />
+      </section>
+
+      {/* Treinar */}
+      <section id="treinar" className="mt-10 scroll-mt-6">
+        <h2 className="flex items-center gap-2 text-lg font-semibold text-zinc-900">
+          <PenLine className="h-5 w-5 text-indigo-400" aria-hidden />
+          Treine com temas inéditos
+        </h2>
+        <p className="mb-4 mt-1 text-sm text-zinc-600">
+          Temas no estilo da banca, com repertórios prontos e caminhos de
+          argumentação. Três deles trazem redação-modelo comentada parágrafo
+          por parágrafo.
+        </p>
+        <div className="grid gap-3 sm:grid-cols-2">
+          {TEMAS_TREINO.map((tema) => (
+            <Link
+              key={tema.id}
+              href={`/redacao/${tema.id}`}
+              className="group flex flex-col rounded-2xl border border-zinc-200 bg-surface p-4 transition hover:border-indigo-300 sm:p-5"
+            >
+              <span className="text-[11px] font-semibold uppercase tracking-wide text-indigo-400">
+                {tema.eixo}
+              </span>
+              <h3 className="mt-1.5 flex-1 font-semibold leading-snug text-zinc-900">
+                {tema.titulo}
+              </h3>
+              <span className="mt-3 flex items-center justify-between">
+                {tema.redacao ? (
+                  <span className="rounded-md bg-emerald-100 px-2 py-0.5 text-[11px] font-semibold text-emerald-700">
+                    Redação-modelo comentada
+                  </span>
+                ) : (
+                  <span className="rounded-md bg-zinc-100 px-2 py-0.5 text-[11px] font-semibold text-zinc-500">
+                    Guia de argumentação
+                  </span>
+                )}
+                <ArrowRight
+                  className="h-4 w-4 text-zinc-400 transition group-hover:translate-x-0.5 group-hover:text-indigo-400"
+                  aria-hidden
+                />
+              </span>
+            </Link>
+          ))}
+        </div>
       </section>
 
       {/* IA */}

@@ -1,9 +1,11 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
   AlertTriangle,
+  ArrowRight,
   Check,
   ChevronDown,
   History,
@@ -11,6 +13,7 @@ import {
   ListFilter,
   Loader2,
   Minus,
+  PenLine,
   Play,
   Plus,
   Settings2,
@@ -646,6 +649,29 @@ export default function HomeClient({
             </aside>
           </div>
         </div>
+      </section>
+
+      {/* Guia da redação */}
+      <section className="mt-6">
+        <Link
+          href="/redacao"
+          className="group flex items-center gap-4 rounded-2xl border border-zinc-200 bg-surface p-5 transition hover:border-indigo-300"
+        >
+          <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-indigo-50 text-indigo-400">
+            <PenLine className="h-5 w-5" aria-hidden />
+          </span>
+          <span className="min-w-0 flex-1">
+            <span className="block font-semibold text-zinc-900">Guia da Redação</span>
+            <span className="mt-0.5 block text-sm text-zinc-600">
+              Como a banca corrige, temas das últimas edições, quiz de regras,
+              temas de treino com redações-modelo e correção por IA.
+            </span>
+          </span>
+          <ArrowRight
+            className="h-5 w-5 shrink-0 text-zinc-400 transition group-hover:translate-x-0.5 group-hover:text-indigo-400"
+            aria-hidden
+          />
+        </Link>
       </section>
 
       {/* Histórico */}
