@@ -343,34 +343,39 @@ export default function ResultClient() {
           </div>
 
           {/* Por área */}
-          <div className="mt-8 space-y-3">
-            {result.perArea.map((area) => {
-              const style = AREAS[area.discipline];
-              const areaPct = Math.round((area.correct / area.total) * 100);
-              return (
-                <div key={area.discipline} className="flex items-center gap-3">
-                  <span className={cx("h-2.5 w-2.5 shrink-0 rounded-full", style.dot)} aria-hidden />
-                  <span className="w-24 shrink-0 text-sm font-medium text-zinc-700 sm:w-28">
-                    {style.short}
-                  </span>
-                  <div className="h-2 flex-1 overflow-hidden rounded-full bg-zinc-100">
-                    <div
-                      className={cx("h-full rounded-full transition-all duration-700", style.bar)}
-                      style={{ width: `${areaPct}%` }}
-                    />
+          <div className="mt-7 border-t border-zinc-100 pt-6">
+            <h2 className="mb-3 text-xs font-semibold uppercase tracking-wide text-zinc-500">
+              Desempenho por área
+            </h2>
+            <div className="space-y-3">
+              {result.perArea.map((area) => {
+                const style = AREAS[area.discipline];
+                const areaPct = Math.round((area.correct / area.total) * 100);
+                return (
+                  <div key={area.discipline} className="flex items-center gap-3">
+                    <span className={cx("h-2.5 w-2.5 shrink-0 rounded-full", style.dot)} aria-hidden />
+                    <span className="w-24 shrink-0 text-sm font-medium text-zinc-700 sm:w-28">
+                      {style.short}
+                    </span>
+                    <div className="h-2 flex-1 overflow-hidden rounded-full bg-zinc-100">
+                      <div
+                        className={cx("h-full rounded-full transition-all duration-700", style.bar)}
+                        style={{ width: `${areaPct}%` }}
+                      />
+                    </div>
+                    <span className="w-16 shrink-0 text-right text-sm tabular-nums text-zinc-600">
+                      {area.correct}/{area.total}
+                    </span>
                   </div>
-                  <span className="w-16 shrink-0 text-right text-sm tabular-nums text-zinc-600">
-                    {area.correct}/{area.total}
-                  </span>
-                </div>
-              );
-            })}
+                );
+              })}
+            </div>
           </div>
 
-          <div className="mt-8 flex flex-col gap-2 sm:flex-row">
+          <div className="mt-7 flex flex-col gap-2 sm:flex-row">
             <Link
               href="/"
-              className="inline-flex h-11 flex-1 items-center justify-center gap-2 rounded-xl bg-indigo-600 px-5 font-semibold text-white shadow-sm transition hover:bg-indigo-500"
+              className="inline-flex h-11 flex-1 items-center justify-center gap-2 whitespace-nowrap rounded-xl bg-indigo-600 px-5 font-semibold text-white shadow-sm transition hover:bg-indigo-500"
             >
               Novo simulado
             </Link>
@@ -378,14 +383,15 @@ export default function ResultClient() {
               type="button"
               onClick={retrySameConfig}
               disabled={retrying}
-              className="inline-flex h-11 flex-1 items-center justify-center gap-2 rounded-xl border border-zinc-200 bg-white px-5 font-semibold text-zinc-700 transition hover:bg-zinc-50 disabled:opacity-60"
+              title="Gera outro simulado com a mesma configuração"
+              className="inline-flex h-11 flex-1 items-center justify-center gap-2 whitespace-nowrap rounded-xl border border-zinc-200 bg-white px-5 font-semibold text-zinc-700 transition hover:bg-zinc-50 disabled:opacity-60"
             >
               {retrying ? (
                 <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
               ) : (
                 <RotateCcw className="h-4 w-4" aria-hidden />
               )}
-              Refazer com a mesma configuração
+              Refazer simulado
             </button>
           </div>
         </section>
