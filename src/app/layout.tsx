@@ -34,8 +34,15 @@ export default function RootLayout({
     <html
       lang="pt-BR"
       className={`${geistSans.variable} ${geistMono.variable} h-full`}
+      suppressHydrationWarning
     >
       <body className="min-h-full flex flex-col bg-zinc-50 text-zinc-900">
+        <script
+          // Aplica o tema salvo antes do primeiro paint para evitar flash.
+          dangerouslySetInnerHTML={{
+            __html: `try{if(localStorage.getItem("simulado-enem:theme")==="light")document.documentElement.classList.add("light")}catch(e){}`,
+          }}
+        />
         {children}
       </body>
     </html>

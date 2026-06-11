@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { GraduationCap } from "lucide-react";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 function cx(...classes: (string | false | undefined)[]): string {
   return classes.filter((c) => typeof c === "string" && c !== "").join(" ");
@@ -43,6 +44,7 @@ export function SiteHeader({ active }: { active: "simulado" | "redacao" }) {
           >
             Redação
           </Link>
+          <ThemeToggle />
         </nav>
       </div>
     </header>
