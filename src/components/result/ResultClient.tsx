@@ -220,8 +220,11 @@ export default function ResultClient() {
       router.replace("/");
       return;
     }
+    // Carga única do localStorage após a hidratação; o re-render é intencional.
+    /* eslint-disable react-hooks/set-state-in-effect */
     setResult(saved);
     setLoaded(true);
+    /* eslint-enable react-hooks/set-state-in-effect */
   }, [router]);
 
   const filtered = useMemo(() => {

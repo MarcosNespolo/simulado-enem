@@ -299,9 +299,12 @@ export default function QuizClient() {
     }
     simuladoRef.current = saved;
     elapsedRef.current = saved.elapsedSeconds;
+    // Carga única do localStorage após a hidratação; o re-render é intencional.
+    /* eslint-disable react-hooks/set-state-in-effect */
     setSimulado(saved);
     setElapsed(saved.elapsedSeconds);
     setLoaded(true);
+    /* eslint-enable react-hooks/set-state-in-effect */
   }, [router]);
 
   const persist = useCallback((next: Simulado) => {

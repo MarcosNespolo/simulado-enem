@@ -14,7 +14,6 @@ import {
   Settings2,
   Timer,
   Trash2,
-  Zap,
 } from "lucide-react";
 import type {
   Discipline,
@@ -94,9 +93,12 @@ export default function HomeClient({
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    // Carga única do localStorage após a hidratação; o re-render é intencional.
+    /* eslint-disable react-hooks/set-state-in-effect */
     setCurrent(loadCurrent());
     setHistory(loadHistory());
     setMounted(true);
+    /* eslint-enable react-hooks/set-state-in-effect */
   }, []);
 
   const activeAreas = useMemo(
@@ -154,14 +156,6 @@ export default function HomeClient({
     }
   }
 
-  function generateQuick() {
-    void generate({
-      counts: { ...DEFAULT_COUNTS },
-      language: "ingles",
-      timerEnabled: true,
-    });
-  }
-
   function generateCustom() {
     const effective = { ...counts };
     for (const area of AREA_ORDER) if (!enabled[area]) effective[area] = 0;
@@ -211,7 +205,7 @@ export default function HomeClient({
   return (
     <div className="mx-auto w-full max-w-5xl px-4 pb-16">
       {/* Hero */}
-      <section className="py-12 text-center sm:py-16">
+      <section className="py-10 text-center sm:py-12">
         <span className="inline-flex items-center gap-1.5 rounded-full border border-indigo-200 bg-indigo-50 px-3 py-1 text-xs font-medium text-indigo-700">
           {totalQuestions} questões oficiais · ENEM {years[0]}–{years[years.length - 1]}
         </span>
@@ -221,27 +215,6 @@ export default function HomeClient({
         <p className="mx-auto mt-4 max-w-xl text-pretty text-zinc-600">
           Monte um simulado do seu jeito, responda no ritmo da prova e receba
           um diagnóstico do que estudar. Grátis, sem cadastro.
-        </p>
-        <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-          <button
-            type="button"
-            onClick={generateQuick}
-            disabled={generating}
-            className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-indigo-600 px-6 font-semibold text-white shadow-sm transition hover:bg-indigo-500 active:scale-[0.99] disabled:opacity-60 sm:w-auto"
-          >
-            {generating ? <Loader2 className="h-5 w-5 animate-spin" aria-hidden /> : <Zap className="h-5 w-5" aria-hidden />}
-            Começar simulado rápido
-          </button>
-          <a
-            href="#personalizar"
-            className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-xl border border-zinc-300 bg-white px-6 font-semibold text-zinc-700 transition hover:border-zinc-400 hover:bg-zinc-50 sm:w-auto"
-          >
-            <Settings2 className="h-5 w-5" aria-hidden />
-            Personalizar
-          </a>
-        </div>
-        <p className="mt-3 text-xs text-zinc-500">
-          Simulado rápido: 20 questões, todas as áreas, com cronômetro.
         </p>
       </section>
 
@@ -286,8 +259,8 @@ export default function HomeClient({
         </section>
       )}
 
-      {/* Personalizar */}
-      <section id="personalizar" className="scroll-mt-6">
+      {/* Configuração do simulado */}
+      <section>
         <div className="overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-sm">
           <div className="border-b border-zinc-100 p-5 sm:p-6">
             <h2 className="flex items-center gap-2 text-lg font-semibold text-zinc-900">
