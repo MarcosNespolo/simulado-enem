@@ -302,12 +302,15 @@ function hintFor(discipline: Discipline, topic: string): string {
 }
 
 /**
- * Gera recomendações de estudo a partir das questões erradas ou em branco,
- * agrupando por tópico e ordenando pelos assuntos com mais erros.
+ * Gera recomendações de estudo a partir das questões erradas, em branco ou
+ * acertadas com ajuda de dicas. O peso de revisão prioriza o erro: cada
+ * erro/branco vale 1 (mais 0,25 por dica gasta nele); um acerto com dicas
+ * vale 0,25 por dica usada.
  */
 export function buildRecommendations(
   questions: SimuladoQuestion[],
-  answers: Record<number, Letter>
+  answers: Record<number, Letter>,
+  hints: Record<number, number> = {}
 ): Recommendation[] {
   const byTopic = new Map<string, Recommendation>();
 
@@ -316,16 +319,34 @@ export function buildRecommendations(
     const key = `${q.discipline}::${topic}`;
     let rec = byTopic.get(key);
     if (!rec) {
-      rec = { discipline: q.discipline, topic, missed: 0, total: 0, hint: hintFor(q.discipline, topic) };
+      rec = {
+        discipline: q.discipline,
+        topic,
+        missed: 0,
+        hintedCorrect: 0,
+        total: 0,
+        weight: 0,
+        hint: hintFor(q.discipline, topic),
+      };
       byTopic.set(key, rec);
     }
     rec.total += 1;
+
     const answer = answers[q.number];
-    if (!answer || answer !== q.correctAlternative) rec.missed += 1;
+    const hintLevel = hints[q.number] ?? 0;
+    const isMissed = !answer || answer !== q.correctAlternative;
+
+    if (isMissed) {
+      rec.missed += 1;
+      rec.weight += 1 + hintLevel * 0.25;
+    } else if (hintLevel > 0) {
+      rec.hintedCorrect += 1;
+      rec.weight += hintLevel * 0.25;
+    }
   }
 
   return Array.from(byTopic.values())
-    .filter((r) => r.missed > 0)
-    .sort((a, b) => b.missed - a.missed || b.missed / b.total - a.missed / a.total)
+    .filter((r) => r.weight > 0)
+    .sort((a, b) => b.weight - a.weight || b.weight / b.total - a.weight / a.total)
     .slice(0, 8);
 }

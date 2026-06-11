@@ -49,6 +49,8 @@ export interface Simulado {
   questions: SimuladoQuestion[];
   answers: Record<number, Letter>;
   flagged: number[];
+  /** Níveis de dica usados por questão (number → 0 a 3). */
+  hints: Record<number, number>;
   currentIndex: number;
   elapsedSeconds: number;
   totalSeconds: number; // limite quando config.timerEnabled
@@ -66,8 +68,13 @@ export interface AreaResult {
 export interface Recommendation {
   discipline: Discipline;
   topic: string;
+  /** Questões erradas ou em branco. */
   missed: number;
+  /** Questões acertadas com ajuda de dicas. */
+  hintedCorrect: number;
   total: number;
+  /** Peso de revisão: erro vale mais que dica (usado para ordenar). */
+  weight: number;
   hint: string;
 }
 
@@ -85,6 +92,7 @@ export interface SimuladoResult {
   recommendations: Recommendation[];
   questions: SimuladoQuestion[];
   answers: Record<number, Letter>;
+  hints: Record<number, number>;
 }
 
 export interface HistoryEntry {

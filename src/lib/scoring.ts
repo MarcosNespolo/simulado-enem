@@ -29,6 +29,8 @@ export function computeResult(simulado: Simulado, timedOut: boolean): SimuladoRe
   const correct = perArea.reduce((acc, a) => acc + a.correct, 0);
   const blank = perArea.reduce((acc, a) => acc + a.blank, 0);
 
+  const hints = simulado.hints ?? {};
+
   return {
     id: simulado.id,
     finishedAt: new Date().toISOString(),
@@ -40,9 +42,10 @@ export function computeResult(simulado: Simulado, timedOut: boolean): SimuladoRe
     blank,
     wrong: total - correct - blank,
     perArea,
-    recommendations: buildRecommendations(simulado.questions, simulado.answers),
+    recommendations: buildRecommendations(simulado.questions, simulado.answers, hints),
     questions: simulado.questions,
     answers: simulado.answers,
+    hints,
   };
 }
 

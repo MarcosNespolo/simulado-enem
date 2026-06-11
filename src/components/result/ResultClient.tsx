@@ -8,6 +8,7 @@ import {
   Check,
   ChevronDown,
   Home,
+  Lightbulb,
   Loader2,
   Minus,
   RotateCcw,
@@ -86,10 +87,12 @@ function ReviewItem({
   question,
   answer,
   status,
+  hintsUsed,
 }: {
   question: SimuladoQuestion;
   answer: Letter | undefined;
   status: QuestionStatus;
+  hintsUsed: number;
 }) {
   const [open, setOpen] = useState(false);
   const style = AREAS[question.discipline];
@@ -115,6 +118,15 @@ function ReviewItem({
         <span className="min-w-0 flex-1 truncate text-sm text-zinc-600">
           {style.short} · ENEM {question.year}
         </span>
+        {hintsUsed > 0 && (
+          <span
+            className="flex shrink-0 items-center gap-1 rounded-md bg-amber-100 px-2 py-1 text-xs font-semibold text-amber-700"
+            title={`Você usou ${hintsUsed} ${hintsUsed === 1 ? "dica" : "dicas"} nesta questão`}
+          >
+            <Lightbulb className="h-3 w-3" aria-hidden />
+            {hintsUsed}
+          </span>
+        )}
         <span
           className={cx(
             "flex shrink-0 items-center gap-1 rounded-md px-2 py-1 text-xs font-semibold",
@@ -269,6 +281,7 @@ export default function ResultClient() {
         questions: data.questions,
         answers: {},
         flagged: [],
+        hints: {},
         currentIndex: 0,
         elapsedSeconds: 0,
         totalSeconds: result.config.timerEnabled
@@ -440,8 +453,12 @@ export default function ResultClient() {
                             {style.short}
                           </span>
                           <span className="text-xs text-zinc-500">
-                            {rec.missed} de {rec.total}{" "}
-                            {rec.total === 1 ? "questão perdida" : "questões perdidas"}
+                            {rec.missed > 0 &&
+                              `${rec.missed} ${rec.missed === 1 ? "perdida" : "perdidas"}`}
+                            {rec.missed > 0 && rec.hintedCorrect > 0 && " · "}
+                            {rec.hintedCorrect > 0 &&
+                              `${rec.hintedCorrect} ${rec.hintedCorrect === 1 ? "acerto" : "acertos"} com dica`}
+                            {` de ${rec.total} ${rec.total === 1 ? "questão" : "questões"}`}
                           </span>
                         </div>
                         <p className="mt-1 text-sm leading-relaxed text-zinc-600">{rec.hint}</p>
@@ -498,6 +515,7 @@ export default function ResultClient() {
                   question={q}
                   answer={result.answers[q.number]}
                   status={statusOf(q, result.answers)}
+                  hintsUsed={result.hints?.[q.number] ?? 0}
                 />
               ))}
             </ul>

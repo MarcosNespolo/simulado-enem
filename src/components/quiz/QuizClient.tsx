@@ -12,6 +12,7 @@ import {
   Copy,
   Flag,
   LayoutGrid,
+  Lightbulb,
   Pause,
   Play,
   Timer as TimerIcon,
@@ -22,6 +23,7 @@ import { AREA_ORDER, AREAS, formatClock } from "@/lib/areas";
 import { clearCurrent, loadCurrent, pushHistory, saveCurrent, saveLastResult } from "@/lib/storage";
 import { computeResult, toHistoryEntry } from "@/lib/scoring";
 import { tagQuestion } from "@/lib/topics";
+import { eliminatedFor, hintsFor, MAX_HINTS } from "@/lib/hints";
 import { CONTEUDOS, promptAprofundar } from "@/data/conteudos";
 import { Markdown } from "@/components/Markdown";
 
@@ -39,19 +41,25 @@ const QuestionView = memo(function QuestionView({
   question,
   answer,
   flagged,
+  hintLevel,
   onSelect,
   onToggleFlag,
   onStudy,
+  onHint,
 }: {
   question: SimuladoQuestion;
   answer: Letter | undefined;
   flagged: boolean;
+  hintLevel: number;
   onSelect: (letter: Letter) => void;
   onToggleFlag: () => void;
   onStudy: () => void;
+  onHint: () => void;
 }) {
   const style = AREAS[question.discipline];
   const extraFiles = question.files.filter((f) => !question.context.includes(f));
+  const revealedHints = hintsFor(question, hintLevel);
+  const eliminated = eliminatedFor(question, hintLevel);
 
   return (
     <article
@@ -134,18 +142,23 @@ const QuestionView = memo(function QuestionView({
       <div role="radiogroup" aria-label="Alternativas" className="mt-4 space-y-2.5">
         {question.alternatives.map((alt) => {
           const selected = answer === alt.letter;
+          const isEliminated = eliminated.includes(alt.letter);
           return (
             <button
               key={alt.letter}
               type="button"
               role="radio"
               aria-checked={selected}
+              disabled={isEliminated}
+              aria-label={isEliminated ? `Alternativa ${alt.letter} descartada pela dica` : undefined}
               onClick={() => onSelect(alt.letter)}
               className={cx(
                 "flex w-full items-center gap-3.5 rounded-xl border p-3.5 text-left transition sm:p-4",
-                selected
-                  ? "border-indigo-600 bg-indigo-50/70 ring-1 ring-indigo-600"
-                  : "border-zinc-200 bg-surface hover:border-indigo-300 hover:bg-indigo-50/40"
+                isEliminated
+                  ? "border-zinc-100 bg-surface opacity-40"
+                  : selected
+                    ? "border-indigo-600 bg-indigo-50/70 ring-1 ring-indigo-600"
+                    : "border-zinc-200 bg-surface hover:border-indigo-300 hover:bg-indigo-50/40"
               )}
             >
               <span
@@ -159,7 +172,14 @@ const QuestionView = memo(function QuestionView({
                 {alt.letter}
               </span>
               {alt.text !== null && alt.text !== "" ? (
-                <span className="min-w-0 flex-1 leading-relaxed text-zinc-800">{alt.text}</span>
+                <span
+                  className={cx(
+                    "min-w-0 flex-1 leading-relaxed text-zinc-800",
+                    isEliminated && "line-through"
+                  )}
+                >
+                  {alt.text}
+                </span>
               ) : alt.file ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img
@@ -172,6 +192,39 @@ const QuestionView = memo(function QuestionView({
             </button>
           );
         })}
+      </div>
+
+      {/* Dicas */}
+      <div className="mt-5">
+        {revealedHints.map((dica) => (
+          <div
+            key={dica.level}
+            className="mb-2 flex gap-2.5 rounded-xl border border-amber-200 bg-amber-50/60 p-3.5 animate-fade-in"
+          >
+            <Lightbulb className="mt-0.5 h-4 w-4 shrink-0 text-amber-600" aria-hidden />
+            <div className="min-w-0">
+              <p className="text-[11px] font-bold uppercase tracking-wide text-amber-600">
+                Dica {dica.level} · {dica.titulo}
+              </p>
+              <p className="mt-0.5 text-sm leading-relaxed text-zinc-700">{dica.texto}</p>
+            </div>
+          </div>
+        ))}
+        {hintLevel < MAX_HINTS && (
+          <button
+            type="button"
+            onClick={onHint}
+            className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-zinc-200 px-3 text-sm font-medium text-zinc-500 transition hover:border-amber-300 hover:text-amber-600"
+          >
+            <Lightbulb className="h-4 w-4" aria-hidden />
+            {hintLevel === 0 ? "Pedir uma dica" : `Pedir outra dica (${hintLevel}/${MAX_HINTS})`}
+          </button>
+        )}
+        {hintLevel > 0 && (
+          <p className="mt-2 text-xs text-zinc-400">
+            Dicas usadas entram no diagnóstico do resultado (pesam menos que um erro).
+          </p>
+        )}
       </div>
     </article>
   );
@@ -501,12 +554,14 @@ export default function QuizClient() {
       router.replace("/");
       return;
     }
-    simuladoRef.current = saved;
-    elapsedRef.current = saved.elapsedSeconds;
+    // Migração: simulados salvos antes do recurso de dicas não têm o campo.
+    const migrated = { ...saved, hints: saved.hints ?? {} };
+    simuladoRef.current = migrated;
+    elapsedRef.current = migrated.elapsedSeconds;
     // Carga única do localStorage após a hidratação; o re-render é intencional.
     /* eslint-disable react-hooks/set-state-in-effect */
-    setSimulado(saved);
-    setElapsed(saved.elapsedSeconds);
+    setSimulado(migrated);
+    setElapsed(migrated.elapsedSeconds);
     setLoaded(true);
     /* eslint-enable react-hooks/set-state-in-effect */
   }, [router]);
@@ -593,14 +648,33 @@ export default function QuizClient() {
     (letter: Letter) => {
       const s = simuladoRef.current;
       if (!s) return;
-      const number = s.questions[s.currentIndex].number;
+      const question = s.questions[s.currentIndex];
+      const hintLevel = s.hints?.[question.number] ?? 0;
+      if (eliminatedFor(question, hintLevel).includes(letter)) return;
       const answers = { ...s.answers };
-      if (answers[number] === letter) delete answers[number];
-      else answers[number] = letter;
+      if (answers[question.number] === letter) delete answers[question.number];
+      else answers[question.number] = letter;
       update({ answers });
     },
     [update]
   );
+
+  const requestHint = useCallback(() => {
+    const s = simuladoRef.current;
+    if (!s) return;
+    const question = s.questions[s.currentIndex];
+    const current = s.hints?.[question.number] ?? 0;
+    if (current >= MAX_HINTS) return;
+    const nextLevel = current + 1;
+    const hints = { ...(s.hints ?? {}), [question.number]: nextLevel };
+    // Se a resposta marcada acabou de ser descartada pela dica, desmarca.
+    const answers = { ...s.answers };
+    const marked = answers[question.number];
+    if (marked && eliminatedFor(question, nextLevel).includes(marked)) {
+      delete answers[question.number];
+    }
+    update({ hints, answers });
+  }, [update]);
 
   const toggleFlag = useCallback(() => {
     const s = simuladoRef.current;
@@ -658,6 +732,8 @@ export default function QuizClient() {
         setMapOpen((v) => !v);
       } else if (key === "e") {
         setStudyOpen(true);
+      } else if (key === "d") {
+        requestHint();
       } else if (e.key === " " && s.config.timerEnabled) {
         e.preventDefault();
         setPaused(true);
@@ -665,7 +741,7 @@ export default function QuizClient() {
     }
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [loaded, mapOpen, confirmOpen, timeUp, paused, studyOpen, select, goTo, toggleFlag]);
+  }, [loaded, mapOpen, confirmOpen, timeUp, paused, studyOpen, select, goTo, toggleFlag, requestHint]);
 
   if (!loaded || !simulado) {
     return (
@@ -782,12 +858,14 @@ export default function QuizClient() {
           question={question}
           answer={simulado.answers[question.number]}
           flagged={simulado.flagged.includes(question.number)}
+          hintLevel={simulado.hints?.[question.number] ?? 0}
           onSelect={select}
           onToggleFlag={toggleFlag}
           onStudy={openStudy}
+          onHint={requestHint}
         />
         <p className="mt-4 hidden text-center text-xs text-zinc-400 lg:block">
-          Atalhos: A–E respondem · ← → navegam · F marca · M abre o mapa · E estuda o conteúdo
+          Atalhos: A–E respondem · ← → navegam · F marca · D dica · E estuda · M mapa
         </p>
       </main>
 

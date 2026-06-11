@@ -203,6 +203,7 @@ export default function HomeClient({
         questions: data.questions,
         answers: {},
         flagged: [],
+        hints: {},
         currentIndex: 0,
         elapsedSeconds: 0,
         totalSeconds: config.timerEnabled
