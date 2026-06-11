@@ -612,6 +612,11 @@ export default function QuizClient() {
     update({ flagged });
   }, [update]);
 
+  // Callback estável: passar uma arrow inline quebraria o memo do
+  // QuestionView e re-renderizaria a questão (e suas imagens) a cada
+  // tick do cronômetro.
+  const openStudy = useCallback(() => setStudyOpen(true), []);
+
   // Atalhos de teclado.
   useEffect(() => {
     if (!loaded) return;
@@ -779,7 +784,7 @@ export default function QuizClient() {
           flagged={simulado.flagged.includes(question.number)}
           onSelect={select}
           onToggleFlag={toggleFlag}
-          onStudy={() => setStudyOpen(true)}
+          onStudy={openStudy}
         />
         <p className="mt-4 hidden text-center text-xs text-zinc-400 lg:block">
           Atalhos: A–E respondem · ← → navegam · F marca · M abre o mapa · E estuda o conteúdo
