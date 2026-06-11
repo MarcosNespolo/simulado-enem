@@ -5,8 +5,11 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
   AlertTriangle,
+  BookOpen,
+  Check,
   ChevronLeft,
   ChevronRight,
+  Copy,
   Flag,
   LayoutGrid,
   Pause,
@@ -18,6 +21,8 @@ import type { Letter, Simulado, SimuladoQuestion } from "@/lib/types";
 import { AREA_ORDER, AREAS, formatClock } from "@/lib/areas";
 import { clearCurrent, loadCurrent, pushHistory, saveCurrent, saveLastResult } from "@/lib/storage";
 import { computeResult, toHistoryEntry } from "@/lib/scoring";
+import { tagQuestion } from "@/lib/topics";
+import { CONTEUDOS, promptAprofundar } from "@/data/conteudos";
 import { Markdown } from "@/components/Markdown";
 
 const LETTERS: Letter[] = ["A", "B", "C", "D", "E"];
@@ -36,12 +41,14 @@ const QuestionView = memo(function QuestionView({
   flagged,
   onSelect,
   onToggleFlag,
+  onStudy,
 }: {
   question: SimuladoQuestion;
   answer: Letter | undefined;
   flagged: boolean;
   onSelect: (letter: Letter) => void;
   onToggleFlag: () => void;
+  onStudy: () => void;
 }) {
   const style = AREAS[question.discipline];
   const extraFiles = question.files.filter((f) => !question.context.includes(f));
@@ -71,23 +78,34 @@ const QuestionView = memo(function QuestionView({
             </span>
           )}
         </div>
-        <button
-          type="button"
-          onClick={onToggleFlag}
-          aria-pressed={flagged}
-          title={flagged ? "Desmarcar questão" : "Marcar para revisão (F)"}
-          className={cx(
-            "flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border transition",
-            flagged
-              ? "border-amber-300 bg-amber-50 text-amber-600"
-              : "border-zinc-200 text-zinc-400 hover:border-amber-300 hover:text-amber-500"
-          )}
-        >
-          <Flag className={cx("h-4 w-4", flagged && "fill-current")} aria-hidden />
-          <span className="sr-only">
-            {flagged ? "Desmarcar questão" : "Marcar questão para revisão"}
-          </span>
-        </button>
+        <div className="flex shrink-0 gap-1.5">
+          <button
+            type="button"
+            onClick={onStudy}
+            title="Estudar este conteúdo (E)"
+            className="flex h-9 w-9 items-center justify-center rounded-lg border border-zinc-200 text-zinc-400 transition hover:border-indigo-300 hover:text-indigo-400"
+          >
+            <BookOpen className="h-4 w-4" aria-hidden />
+            <span className="sr-only">Estudar o conteúdo desta questão</span>
+          </button>
+          <button
+            type="button"
+            onClick={onToggleFlag}
+            aria-pressed={flagged}
+            title={flagged ? "Desmarcar questão" : "Marcar para revisão (F)"}
+            className={cx(
+              "flex h-9 w-9 items-center justify-center rounded-lg border transition",
+              flagged
+                ? "border-amber-300 bg-amber-50 text-amber-600"
+                : "border-zinc-200 text-zinc-400 hover:border-amber-300 hover:text-amber-500"
+            )}
+          >
+            <Flag className={cx("h-4 w-4", flagged && "fill-current")} aria-hidden />
+            <span className="sr-only">
+              {flagged ? "Desmarcar questão" : "Marcar questão para revisão"}
+            </span>
+          </button>
+        </div>
       </div>
 
       <Markdown>{question.context}</Markdown>
@@ -273,6 +291,156 @@ function QuestionMap({
 }
 
 /* ------------------------------------------------------------------ */
+/* Modo estudo                                                         */
+/* ------------------------------------------------------------------ */
+
+function StudySheet({
+  question,
+  timerEnabled,
+  onClose,
+}: {
+  question: SimuladoQuestion;
+  timerEnabled: boolean;
+  onClose: () => void;
+}) {
+  const [copied, setCopied] = useState(false);
+  const topic = tagQuestion(question);
+  const conteudo = CONTEUDOS[topic];
+  const style = AREAS[question.discipline];
+
+  async function copyPrompt() {
+    try {
+      await navigator.clipboard.writeText(promptAprofundar(topic, style.short));
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 2500);
+    } catch {
+      // clipboard indisponível: segue sem feedback
+    }
+  }
+
+  return (
+    <div className="fixed inset-0 z-50">
+      <button
+        type="button"
+        aria-label="Fechar modo estudo"
+        onClick={onClose}
+        className="absolute inset-0 animate-fade-in bg-black/60"
+      />
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-label="Modo estudo"
+        className="absolute inset-x-0 bottom-0 flex max-h-[88dvh] flex-col rounded-t-2xl bg-surface shadow-xl animate-sheet-up sm:inset-y-0 sm:left-auto sm:right-0 sm:max-h-none sm:w-[440px] sm:rounded-none"
+      >
+        <div className="flex items-center justify-between gap-3 border-b border-zinc-100 p-4 sm:p-5">
+          <div className="flex min-w-0 items-center gap-2.5">
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-indigo-50 text-indigo-400">
+              <BookOpen className="h-4 w-4" aria-hidden />
+            </span>
+            <div className="min-w-0">
+              <h2 className="font-semibold text-zinc-900">Modo estudo</h2>
+              <p className="truncate text-xs text-zinc-500">
+                {style.short} · {topic}
+              </p>
+            </div>
+          </div>
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label="Fechar"
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-zinc-400 transition hover:bg-zinc-100 hover:text-zinc-600"
+          >
+            <X className="h-5 w-5" aria-hidden />
+          </button>
+        </div>
+
+        {timerEnabled && (
+          <p className="flex items-center gap-2 border-b border-zinc-100 bg-amber-50/70 px-4 py-2.5 text-xs font-medium text-amber-700 sm:px-5">
+            <Pause className="h-3.5 w-3.5 shrink-0" aria-hidden />
+            Cronômetro pausado enquanto você estuda. Na prova real esse botão
+            não existe!
+          </p>
+        )}
+
+        <div className="flex-1 space-y-5 overflow-y-auto p-4 sm:p-5">
+          {conteudo ? (
+            <>
+              <p className="leading-relaxed text-zinc-700">{conteudo.ideiaCentral}</p>
+              <div>
+                <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-zinc-500">
+                  O que dominar
+                </h3>
+                <ul className="space-y-2">
+                  {conteudo.pontosChave.map((ponto) => (
+                    <li key={ponto} className="flex gap-2 text-sm leading-relaxed text-zinc-600">
+                      <Check className="mt-0.5 h-4 w-4 shrink-0 text-emerald-400" aria-hidden />
+                      {ponto}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div className="rounded-xl bg-indigo-50/60 p-4">
+                <h3 className="text-xs font-semibold uppercase tracking-wide text-indigo-400">
+                  Como cai no ENEM
+                </h3>
+                <p className="mt-1.5 text-sm leading-relaxed text-zinc-600">
+                  {conteudo.comoCaiNoEnem}
+                </p>
+              </div>
+            </>
+          ) : (
+            <p className="text-sm leading-relaxed text-zinc-600">
+              Ainda não temos resumo deste conteúdo, mas você pode se aprofundar
+              com o prompt abaixo.
+            </p>
+          )}
+
+          <div className="border-t border-zinc-100 pt-4">
+            <h3 className="text-sm font-semibold text-zinc-900">Quer ir mais fundo?</h3>
+            <p className="mt-1 text-sm leading-relaxed text-zinc-600">
+              Copie o prompt e cole na IA que você usa (ChatGPT, Claude,
+              Gemini...) para uma aula completa com exemplos resolvidos.
+            </p>
+            <button
+              type="button"
+              onClick={copyPrompt}
+              className={cx(
+                "mt-3 inline-flex h-10 items-center gap-2 rounded-xl px-4 text-sm font-semibold transition",
+                copied
+                  ? "bg-emerald-50 text-emerald-700"
+                  : "border border-zinc-200 bg-surface text-zinc-700 hover:border-indigo-300"
+              )}
+            >
+              {copied ? (
+                <>
+                  <Check className="h-4 w-4" aria-hidden />
+                  Copiado!
+                </>
+              ) : (
+                <>
+                  <Copy className="h-4 w-4" aria-hidden />
+                  Copiar prompt de estudo
+                </>
+              )}
+            </button>
+          </div>
+        </div>
+
+        <div className="border-t border-zinc-100 p-4 sm:p-5">
+          <button
+            type="button"
+            onClick={onClose}
+            className="h-11 w-full rounded-xl bg-indigo-600 font-semibold text-white shadow-sm transition hover:bg-indigo-500"
+          >
+            Voltar para a questão
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ------------------------------------------------------------------ */
 /* Quiz                                                                */
 /* ------------------------------------------------------------------ */
 
@@ -285,6 +453,7 @@ export default function QuizClient() {
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [timeUp, setTimeUp] = useState(false);
   const [paused, setPaused] = useState(false);
+  const [studyOpen, setStudyOpen] = useState(false);
 
   const simuladoRef = useRef<Simulado | null>(null);
   const elapsedRef = useRef(0);
@@ -338,9 +507,10 @@ export default function QuizClient() {
     [router]
   );
 
-  // Relógio: conta o tempo decorrido e dispara o fim quando o cronômetro zera.
+  // Relógio: conta o tempo decorrido e dispara o fim quando o cronômetro
+  // zera. O modo estudo também congela a contagem.
   useEffect(() => {
-    if (!loaded || paused || timeUp) return;
+    if (!loaded || paused || timeUp || studyOpen) return;
     const id = window.setInterval(() => {
       elapsedRef.current += 1;
       setElapsed(elapsedRef.current);
@@ -354,7 +524,7 @@ export default function QuizClient() {
       }
     }, 1000);
     return () => window.clearInterval(id);
-  }, [loaded, paused, timeUp]);
+  }, [loaded, paused, timeUp, studyOpen]);
 
   // Persiste ao sair/ocultar a aba.
   useEffect(() => {
@@ -417,6 +587,7 @@ export default function QuizClient() {
       if (e.key === "Escape") {
         setMapOpen(false);
         setConfirmOpen(false);
+        setStudyOpen(false);
         return;
       }
       if (timeUp) return;
@@ -427,7 +598,7 @@ export default function QuizClient() {
         }
         return;
       }
-      if (mapOpen || confirmOpen) return;
+      if (mapOpen || confirmOpen || studyOpen) return;
 
       const s = simuladoRef.current;
       if (!s) return;
@@ -445,6 +616,8 @@ export default function QuizClient() {
         toggleFlag();
       } else if (key === "m") {
         setMapOpen((v) => !v);
+      } else if (key === "e") {
+        setStudyOpen(true);
       } else if (e.key === " " && s.config.timerEnabled) {
         e.preventDefault();
         setPaused(true);
@@ -452,7 +625,7 @@ export default function QuizClient() {
     }
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [loaded, mapOpen, confirmOpen, timeUp, paused, select, goTo, toggleFlag]);
+  }, [loaded, mapOpen, confirmOpen, timeUp, paused, studyOpen, select, goTo, toggleFlag]);
 
   if (!loaded || !simulado) {
     return (
@@ -571,9 +744,10 @@ export default function QuizClient() {
           flagged={simulado.flagged.includes(question.number)}
           onSelect={select}
           onToggleFlag={toggleFlag}
+          onStudy={() => setStudyOpen(true)}
         />
         <p className="mt-4 hidden text-center text-xs text-zinc-400 lg:block">
-          Atalhos: A–E respondem · ← → navegam · F marca · M abre o mapa
+          Atalhos: A–E respondem · ← → navegam · F marca · M abre o mapa · E estuda o conteúdo
         </p>
       </main>
 
@@ -623,6 +797,15 @@ export default function QuizClient() {
             setMapOpen(false);
             setConfirmOpen(true);
           }}
+        />
+      )}
+
+      {/* Modo estudo */}
+      {studyOpen && (
+        <StudySheet
+          question={question}
+          timerEnabled={simulado.config.timerEnabled}
+          onClose={() => setStudyOpen(false)}
         />
       )}
 
