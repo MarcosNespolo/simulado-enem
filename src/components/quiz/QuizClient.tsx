@@ -365,7 +365,42 @@ function StudySheet({
         <div className="flex-1 space-y-5 overflow-y-auto p-4 sm:p-5">
           {conteudo ? (
             <>
-              <p className="leading-relaxed text-zinc-700">{conteudo.ideiaCentral}</p>
+              <p className="rounded-xl bg-zinc-100/60 p-3.5 text-[15px] font-medium leading-relaxed text-zinc-800">
+                {conteudo.ideiaCentral}
+              </p>
+
+              {conteudo.aula.map((secao) => (
+                <div key={secao.titulo}>
+                  <h3 className="mb-1.5 font-semibold text-zinc-900">{secao.titulo}</h3>
+                  <p className="text-[15px] leading-relaxed text-zinc-600">{secao.texto}</p>
+                </div>
+              ))}
+
+              {conteudo.exemplo && (
+                <div className="rounded-xl border border-zinc-200 p-4">
+                  <h3 className="text-xs font-semibold uppercase tracking-wide text-emerald-700">
+                    Exemplo resolvido
+                  </h3>
+                  <p className="mt-2 text-sm font-medium leading-relaxed text-zinc-800">
+                    {conteudo.exemplo.enunciado}
+                  </p>
+                  <ol className="mt-3 space-y-2">
+                    {conteudo.exemplo.passos.map((passo, i) => (
+                      <li key={passo} className="flex gap-2.5 text-sm leading-relaxed text-zinc-600">
+                        <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-zinc-100 text-[10px] font-bold text-zinc-500">
+                          {i + 1}
+                        </span>
+                        {passo}
+                      </li>
+                    ))}
+                  </ol>
+                  <p className="mt-3 flex gap-2 rounded-lg bg-emerald-50/70 p-2.5 text-sm font-medium leading-relaxed text-emerald-700">
+                    <Check className="mt-0.5 h-4 w-4 shrink-0" aria-hidden />
+                    {conteudo.exemplo.resposta}
+                  </p>
+                </div>
+              )}
+
               <div>
                 <h3 className="mb-2 text-xs font-semibold uppercase tracking-wide text-zinc-500">
                   O que dominar
