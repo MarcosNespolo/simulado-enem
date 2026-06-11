@@ -5,8 +5,74 @@
   --font-mono: var(--font-geist-mono);
 }
 
+/*
+ * Tema noturno (padrão do app). Os componentes usam classes light-first
+ * (bg-white, text-zinc-900...); este bloco redefine os tokens para o modo
+ * escuro: "surface" é a cor de cartões/painéis, a escala zinc fica
+ * invertida (50 = fundo da página, 900 = texto principal) e as cores de
+ * apoio ganham tons -50/-300 escuros (fundos/bordas) e -700/-800 claros
+ * (textos sobre esses fundos). Sólidos -400/-500/-600 usados como fundo de
+ * botão permanecem intactos.
+ */
+@theme {
+  --color-surface: #18181b;
+
+  --color-zinc-50: #09090b;
+  --color-zinc-100: #1f1f23;
+  --color-zinc-200: #2e2e34;
+  --color-zinc-300: #46464e;
+  --color-zinc-400: #84848e;
+  --color-zinc-500: #a3a3ad;
+  --color-zinc-600: #c2c2ca;
+  --color-zinc-700: #dadade;
+  --color-zinc-800: #eaeaee;
+  --color-zinc-900: #f4f4f5;
+  --color-zinc-950: #ffffff;
+
+  --color-indigo-50: #1d1b38;
+  --color-indigo-100: #262357;
+  --color-indigo-200: #393470;
+  --color-indigo-300: #4f48a3;
+  --color-indigo-700: #a5b4fc;
+
+  --color-rose-50: #2b1019;
+  --color-rose-100: #401726;
+  --color-rose-200: #572033;
+  --color-rose-300: #8c2b50;
+  --color-rose-700: #fda4af;
+
+  --color-amber-50: #2a1f06;
+  --color-amber-100: #3b2c09;
+  --color-amber-200: #55400e;
+  --color-amber-300: #8a6914;
+  --color-amber-600: #fbbf24;
+  --color-amber-700: #fcd34d;
+
+  --color-emerald-50: #07271c;
+  --color-emerald-100: #0a3325;
+  --color-emerald-200: #11503a;
+  --color-emerald-300: #157a52;
+  --color-emerald-700: #6ee7b7;
+  --color-emerald-800: #a7f3d0;
+
+  --color-sky-50: #082636;
+  --color-sky-100: #0b3349;
+  --color-sky-200: #135070;
+  --color-sky-700: #7dd3fc;
+
+  --color-red-50: #2d1114;
+  --color-red-100: #40191d;
+  --color-red-200: #582329;
+  --color-red-300: #7f3038;
+  --color-red-600: #f87171;
+  --color-red-700: #fca5a5;
+
+  --color-violet-100: #2b1c44;
+  --color-violet-700: #c4b5fd;
+}
+
 html {
-  color-scheme: light;
+  color-scheme: dark;
   scroll-behavior: smooth;
 }
 

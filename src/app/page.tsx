@@ -11,7 +11,7 @@ export default function Home() {
 
   return (
     <div className="flex min-h-dvh flex-col">
-      <header className="border-b border-zinc-200/80 bg-white/70 backdrop-blur">
+      <header className="border-b border-zinc-200/80 bg-surface/70 backdrop-blur">
         <div className="mx-auto flex h-14 w-full max-w-5xl items-center gap-2 px-4">
           <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-indigo-600 to-violet-600 text-white">
             <GraduationCap className="h-5 w-5" aria-hidden />
@@ -27,7 +27,7 @@ export default function Home() {
         <HomeClient years={years} totalQuestions={totalQuestions} />
       </main>
 
-      <footer className="border-t border-zinc-200/80 bg-white">
+      <footer className="border-t border-zinc-200/80 bg-surface">
         <div className="mx-auto w-full max-w-5xl px-4 py-6 text-center text-xs leading-relaxed text-zinc-500">
           <p>
             Projeto de estudo independente, sem vínculo com INEP ou MEC. As

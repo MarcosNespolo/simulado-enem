@@ -49,7 +49,7 @@ const QuestionView = memo(function QuestionView({
   return (
     <article
       key={question.number}
-      className="animate-question-in rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm sm:p-8"
+      className="animate-question-in rounded-2xl border border-zinc-200 bg-surface p-5 shadow-sm sm:p-8"
     >
       <div className="mb-5 flex items-start justify-between gap-3">
         <div className="flex flex-wrap items-center gap-2">
@@ -101,7 +101,7 @@ const QuestionView = memo(function QuestionView({
               src={file}
               alt="Material de apoio da questão"
               loading="lazy"
-              className="mx-auto max-w-full rounded-xl border border-zinc-200 bg-white p-2"
+              className="mx-auto max-w-full rounded-xl border border-zinc-200 bg-[#fff] p-2"
             />
           ))}
         </div>
@@ -127,7 +127,7 @@ const QuestionView = memo(function QuestionView({
                 "flex w-full items-center gap-3.5 rounded-xl border p-3.5 text-left transition sm:p-4",
                 selected
                   ? "border-indigo-600 bg-indigo-50/70 ring-1 ring-indigo-600"
-                  : "border-zinc-200 bg-white hover:border-indigo-300 hover:bg-indigo-50/40"
+                  : "border-zinc-200 bg-surface hover:border-indigo-300 hover:bg-indigo-50/40"
               )}
             >
               <span
@@ -135,7 +135,7 @@ const QuestionView = memo(function QuestionView({
                   "flex h-8 w-8 shrink-0 items-center justify-center rounded-full border text-sm font-bold transition",
                   selected
                     ? "border-indigo-600 bg-indigo-600 text-white"
-                    : "border-zinc-300 bg-white text-zinc-600"
+                    : "border-zinc-300 bg-surface text-zinc-600"
                 )}
               >
                 {alt.letter}
@@ -148,7 +148,7 @@ const QuestionView = memo(function QuestionView({
                   src={alt.file}
                   alt={`Alternativa ${alt.letter}`}
                   loading="lazy"
-                  className="max-h-24 rounded-md bg-white object-contain"
+                  className="max-h-24 rounded-md bg-[#fff] object-contain p-1"
                 />
               ) : null}
             </button>
@@ -184,13 +184,13 @@ function QuestionMap({
         type="button"
         aria-label="Fechar mapa de questões"
         onClick={onClose}
-        className="absolute inset-0 animate-fade-in bg-zinc-900/40"
+        className="absolute inset-0 animate-fade-in bg-black/60"
       />
       <div
         role="dialog"
         aria-modal="true"
         aria-label="Mapa de questões"
-        className="absolute inset-x-0 bottom-0 flex max-h-[85dvh] flex-col rounded-t-2xl bg-white shadow-xl animate-sheet-up sm:inset-y-0 sm:left-auto sm:right-0 sm:max-h-none sm:w-[400px] sm:rounded-none"
+        className="absolute inset-x-0 bottom-0 flex max-h-[85dvh] flex-col rounded-t-2xl bg-surface shadow-xl animate-sheet-up sm:inset-y-0 sm:left-auto sm:right-0 sm:max-h-none sm:w-[400px] sm:rounded-none"
       >
         <div className="flex items-center justify-between border-b border-zinc-100 p-4 sm:p-5">
           <div>
@@ -238,14 +238,14 @@ function QuestionMap({
                           "relative flex h-10 items-center justify-center rounded-lg border text-sm font-semibold tabular-nums transition",
                           isAnswered
                             ? "border-transparent bg-indigo-600 text-white hover:bg-indigo-500"
-                            : "border-zinc-200 bg-white text-zinc-600 hover:border-indigo-300 hover:bg-indigo-50",
-                          isCurrent && "ring-2 ring-indigo-600 ring-offset-1"
+                            : "border-zinc-200 bg-surface text-zinc-600 hover:border-indigo-300 hover:bg-indigo-50",
+                          isCurrent && "ring-2 ring-indigo-600 ring-offset-1 ring-offset-surface"
                         )}
                       >
                         {q.number}
                         {isFlagged && (
                           <span
-                            className="absolute -right-1 -top-1 h-2.5 w-2.5 rounded-full border border-white bg-amber-400"
+                            className="absolute -right-1 -top-1 h-2.5 w-2.5 rounded-full border border-surface bg-amber-400"
                             aria-hidden
                           />
                         )}
@@ -477,7 +477,7 @@ export default function QuizClient() {
   return (
     <div className="flex min-h-dvh flex-col bg-zinc-50">
       {/* Barra superior */}
-      <header className="sticky top-0 z-30 border-b border-zinc-200/80 bg-white/85 backdrop-blur">
+      <header className="sticky top-0 z-30 border-b border-zinc-200/80 bg-surface/85 backdrop-blur">
         <div
           className="absolute inset-x-0 top-0 h-0.5 bg-zinc-100"
           role="progressbar"
@@ -578,13 +578,13 @@ export default function QuizClient() {
       </main>
 
       {/* Barra inferior */}
-      <nav className="fixed inset-x-0 bottom-0 z-30 border-t border-zinc-200/80 bg-white/90 pb-[env(safe-area-inset-bottom)] backdrop-blur">
+      <nav className="fixed inset-x-0 bottom-0 z-30 border-t border-zinc-200/80 bg-surface/90 pb-[env(safe-area-inset-bottom)] backdrop-blur">
         <div className="mx-auto flex h-16 w-full max-w-3xl items-center gap-3 px-4">
           <button
             type="button"
             onClick={() => goTo(simulado.currentIndex - 1)}
             disabled={simulado.currentIndex === 0}
-            className="inline-flex h-11 flex-1 items-center justify-center gap-1 rounded-xl border border-zinc-200 bg-white font-medium text-zinc-700 transition hover:bg-zinc-50 disabled:opacity-40 sm:flex-none sm:px-5"
+            className="inline-flex h-11 flex-1 items-center justify-center gap-1 rounded-xl border border-zinc-200 bg-surface font-medium text-zinc-700 transition hover:bg-zinc-50 disabled:opacity-40 sm:flex-none sm:px-5"
           >
             <ChevronLeft className="h-4 w-4" aria-hidden />
             Anterior
@@ -633,13 +633,13 @@ export default function QuizClient() {
             type="button"
             aria-label="Cancelar"
             onClick={() => setConfirmOpen(false)}
-            className="absolute inset-0 animate-fade-in bg-zinc-900/40"
+            className="absolute inset-0 animate-fade-in bg-black/60"
           />
           <div
             role="dialog"
             aria-modal="true"
             aria-label="Finalizar simulado"
-            className="relative w-full max-w-sm animate-sheet-up rounded-2xl bg-white p-6 shadow-xl"
+            className="relative w-full max-w-sm animate-sheet-up rounded-2xl bg-surface p-6 shadow-xl"
           >
             <h2 className="text-lg font-semibold text-zinc-900">Finalizar simulado?</h2>
             <div className="mt-4 grid grid-cols-3 gap-2 text-center">
@@ -687,12 +687,12 @@ export default function QuizClient() {
       {/* Tempo esgotado */}
       {timeUp && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
-          <div className="absolute inset-0 animate-fade-in bg-zinc-900/50" />
+          <div className="absolute inset-0 animate-fade-in bg-black/70" />
           <div
             role="alertdialog"
             aria-modal="true"
             aria-label="Tempo esgotado"
-            className="relative w-full max-w-sm animate-sheet-up rounded-2xl bg-white p-6 text-center shadow-xl"
+            className="relative w-full max-w-sm animate-sheet-up rounded-2xl bg-surface p-6 text-center shadow-xl"
           >
             <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-red-50 text-red-600">
               <TimerIcon className="h-6 w-6" aria-hidden />
@@ -715,9 +715,9 @@ export default function QuizClient() {
 
       {/* Pausa */}
       {paused && !timeUp && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-white/80 p-4 backdrop-blur-sm">
-          <div className="w-full max-w-sm animate-sheet-up rounded-2xl border border-zinc-200 bg-white p-6 text-center shadow-xl">
-            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-indigo-50 text-indigo-600">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-surface/80 p-4 backdrop-blur-sm">
+          <div className="w-full max-w-sm animate-sheet-up rounded-2xl border border-zinc-200 bg-surface p-6 text-center shadow-xl">
+            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-indigo-50 text-indigo-400">
               <Pause className="h-6 w-6" aria-hidden />
             </div>
             <h2 className="mt-3 text-lg font-semibold text-zinc-900">Simulado pausado</h2>

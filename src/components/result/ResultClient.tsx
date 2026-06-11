@@ -101,7 +101,7 @@ function ReviewItem({
   }[status];
 
   return (
-    <li className="overflow-hidden rounded-xl border border-zinc-200 bg-white">
+    <li className="overflow-hidden rounded-xl border border-zinc-200 bg-surface">
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
@@ -151,7 +151,7 @@ function ReviewItem({
                       ? "border-emerald-400 bg-emerald-50/70"
                       : isChosen
                         ? "border-red-300 bg-red-50/70"
-                        : "border-zinc-200 bg-white"
+                        : "border-zinc-200 bg-surface"
                   )}
                 >
                   <span
@@ -161,7 +161,7 @@ function ReviewItem({
                         ? "border-emerald-500 bg-emerald-500 text-white"
                         : isChosen
                           ? "border-red-400 bg-red-400 text-white"
-                          : "border-zinc-300 bg-white text-zinc-500"
+                          : "border-zinc-300 bg-surface text-zinc-500"
                     )}
                   >
                     {alt.letter}
@@ -176,13 +176,13 @@ function ReviewItem({
                       src={alt.file}
                       alt={`Alternativa ${alt.letter}`}
                       loading="lazy"
-                      className="max-h-20 rounded-md bg-white object-contain"
+                      className="max-h-20 rounded-md bg-[#fff] object-contain p-1"
                     />
                   ) : (
                     <span className="flex-1" />
                   )}
                   {isCorrect && (
-                    <span className="shrink-0 text-xs font-semibold text-emerald-600">
+                    <span className="shrink-0 text-xs font-semibold text-emerald-400">
                       Gabarito
                     </span>
                   )}
@@ -292,7 +292,7 @@ export default function ResultClient() {
 
   return (
     <div className="min-h-dvh bg-zinc-50">
-      <header className="border-b border-zinc-200/80 bg-white/70 backdrop-blur">
+      <header className="border-b border-zinc-200/80 bg-surface/70 backdrop-blur">
         <div className="mx-auto flex h-14 w-full max-w-3xl items-center justify-between px-4">
           <span className="font-semibold tracking-tight">Resultado</span>
           <Link
@@ -307,7 +307,7 @@ export default function ResultClient() {
 
       <main className="mx-auto w-full max-w-3xl space-y-6 px-4 py-8 pb-16">
         {/* Pontuação */}
-        <section className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm sm:p-8">
+        <section className="rounded-2xl border border-zinc-200 bg-surface p-6 shadow-sm sm:p-8">
           <div className="flex flex-col items-center gap-6 sm:flex-row sm:gap-10">
             <ScoreRing pct={pct} />
             <div className="w-full flex-1 text-center sm:text-left">
@@ -384,7 +384,7 @@ export default function ResultClient() {
               onClick={retrySameConfig}
               disabled={retrying}
               title="Gera outro simulado com a mesma configuração"
-              className="inline-flex h-11 flex-1 items-center justify-center gap-2 whitespace-nowrap rounded-xl border border-zinc-200 bg-white px-5 font-semibold text-zinc-700 transition hover:bg-zinc-50 disabled:opacity-60"
+              className="inline-flex h-11 flex-1 items-center justify-center gap-2 whitespace-nowrap rounded-xl border border-zinc-200 bg-surface px-5 font-semibold text-zinc-700 transition hover:bg-zinc-50 disabled:opacity-60"
             >
               {retrying ? (
                 <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
@@ -397,9 +397,9 @@ export default function ResultClient() {
         </section>
 
         {/* O que estudar */}
-        <section className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm sm:p-8">
+        <section className="rounded-2xl border border-zinc-200 bg-surface p-6 shadow-sm sm:p-8">
           <h2 className="flex items-center gap-2 text-lg font-semibold text-zinc-900">
-            <BookOpen className="h-5 w-5 text-indigo-600" aria-hidden />
+            <BookOpen className="h-5 w-5 text-indigo-400" aria-hidden />
             O que estudar agora
           </h2>
           {result.recommendations.length === 0 ? (
@@ -424,7 +424,7 @@ export default function ResultClient() {
                       key={`${rec.discipline}-${rec.topic}`}
                       className="flex gap-3.5 rounded-xl border border-zinc-100 bg-zinc-50/60 p-4"
                     >
-                      <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-white text-sm font-bold text-zinc-500 shadow-sm">
+                      <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-surface text-sm font-bold text-zinc-500 shadow-sm">
                         {i + 1}
                       </span>
                       <div className="min-w-0">
@@ -477,7 +477,7 @@ export default function ResultClient() {
                     "h-8 rounded-lg border px-3 text-xs font-medium transition",
                     filter === value
                       ? "border-indigo-600 bg-indigo-50 text-indigo-700"
-                      : "border-zinc-200 bg-white text-zinc-500 hover:border-zinc-300"
+                      : "border-zinc-200 bg-surface text-zinc-500 hover:border-zinc-300"
                   )}
                 >
                   {label} ({counts[value]})
@@ -487,7 +487,7 @@ export default function ResultClient() {
           </div>
 
           {filtered.length === 0 ? (
-            <p className="rounded-xl border border-dashed border-zinc-200 bg-white p-8 text-center text-sm text-zinc-500">
+            <p className="rounded-xl border border-dashed border-zinc-200 bg-surface p-8 text-center text-sm text-zinc-500">
               Nenhuma questão neste filtro.
             </p>
           ) : (

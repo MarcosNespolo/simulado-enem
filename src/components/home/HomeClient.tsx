@@ -203,26 +203,12 @@ export default function HomeClient({
   const answeredCount = current ? Object.keys(current.answers).length : 0;
 
   return (
-    <div className="mx-auto w-full max-w-5xl px-4 pb-16">
-      {/* Hero */}
-      <section className="py-10 text-center sm:py-12">
-        <span className="inline-flex items-center gap-1.5 rounded-full border border-indigo-200 bg-indigo-50 px-3 py-1 text-xs font-medium text-indigo-700">
-          {totalQuestions} questões oficiais · ENEM {years[0]}–{years[years.length - 1]}
-        </span>
-        <h1 className="mx-auto mt-4 max-w-2xl text-balance text-4xl font-bold tracking-tight text-zinc-900 sm:text-5xl">
-          Treine para o ENEM com questões de verdade
-        </h1>
-        <p className="mx-auto mt-4 max-w-xl text-pretty text-zinc-600">
-          Monte um simulado do seu jeito, responda no ritmo da prova e receba
-          um diagnóstico do que estudar. Grátis, sem cadastro.
-        </p>
-      </section>
-
+    <div className="mx-auto w-full max-w-5xl px-4 pb-16 pt-6 sm:pt-8">
       {/* Simulado em andamento */}
       {mounted && current && current.status === "in-progress" && (
-        <section className="mb-10 animate-fade-in">
-          <div className="flex flex-col gap-4 rounded-2xl border border-indigo-200 bg-white p-5 shadow-sm sm:flex-row sm:items-center">
-            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600">
+        <section className="mb-6 animate-fade-in">
+          <div className="flex flex-col gap-4 rounded-2xl border border-indigo-200 bg-surface p-5 shadow-sm sm:flex-row sm:items-center">
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-indigo-50 text-indigo-400">
               <Play className="h-5 w-5" aria-hidden />
             </div>
             <div className="min-w-0 flex-1">
@@ -261,15 +247,17 @@ export default function HomeClient({
 
       {/* Configuração do simulado */}
       <section>
-        <div className="overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-sm">
+        <div className="overflow-hidden rounded-2xl border border-zinc-200 bg-surface shadow-sm">
           <div className="border-b border-zinc-100 p-5 sm:p-6">
-            <h2 className="flex items-center gap-2 text-lg font-semibold text-zinc-900">
-              <Settings2 className="h-5 w-5 text-indigo-600" aria-hidden />
+            <h1 className="flex items-center gap-2 text-lg font-semibold text-zinc-900">
+              <Settings2 className="h-5 w-5 text-indigo-400" aria-hidden />
               Monte seu simulado
-            </h2>
-            <p className="mt-1 text-sm text-zinc-600">
-              Escolha as áreas e a quantidade de questões. As questões são
-              sorteadas das provas de {years[0]} a {years[years.length - 1]}.
+            </h1>
+            <p className="mt-1 max-w-3xl text-sm text-zinc-600">
+              {totalQuestions} questões oficiais do ENEM ({years[0]}–
+              {years[years.length - 1]}), sorteadas na hora. Responda no ritmo
+              da prova e receba um diagnóstico do que estudar. Grátis, sem
+              cadastro.
             </p>
           </div>
 
@@ -288,7 +276,7 @@ export default function HomeClient({
                         "h-9 rounded-lg border px-4 text-sm font-medium transition",
                         total === preset
                           ? "border-indigo-600 bg-indigo-50 text-indigo-700"
-                          : "border-zinc-200 bg-white text-zinc-600 hover:border-zinc-300 hover:bg-zinc-50"
+                          : "border-zinc-200 bg-surface text-zinc-600 hover:border-zinc-300 hover:bg-zinc-50"
                       )}
                     >
                       {preset} questões
@@ -311,7 +299,7 @@ export default function HomeClient({
                         key={area}
                         className={cx(
                           "flex items-center gap-3 rounded-xl border p-3 transition",
-                          isOn ? "border-zinc-200 bg-white" : "border-zinc-100 bg-zinc-50"
+                          isOn ? "border-zinc-200 bg-surface" : "border-zinc-100 bg-zinc-50"
                         )}
                       >
                         <button
@@ -324,7 +312,7 @@ export default function HomeClient({
                             "flex h-5 w-5 shrink-0 items-center justify-center rounded-md border transition",
                             isOn
                               ? "border-indigo-600 bg-indigo-600 text-white"
-                              : "border-zinc-300 bg-white"
+                              : "border-zinc-300 bg-surface"
                           )}
                         >
                           {isOn && <Check className="h-3.5 w-3.5" aria-hidden />}
@@ -347,7 +335,7 @@ export default function HomeClient({
                         </button>
                         <div
                           className={cx(
-                            "flex items-center gap-1 rounded-lg border border-zinc-200 bg-white p-0.5",
+                            "flex items-center gap-1 rounded-lg border border-zinc-200 bg-surface p-0.5",
                             !isOn && "pointer-events-none opacity-40"
                           )}
                         >
@@ -405,7 +393,7 @@ export default function HomeClient({
                         className={cx(
                           "h-8 rounded-md px-4 text-sm font-medium transition",
                           language === value
-                            ? "bg-white text-zinc-900 shadow-sm"
+                            ? "bg-surface text-zinc-900 shadow-sm"
                             : "text-zinc-500 hover:text-zinc-700"
                         )}
                       >
@@ -440,7 +428,7 @@ export default function HomeClient({
                 >
                   <span
                     className={cx(
-                      "absolute top-0.5 h-5 w-5 rounded-full bg-white shadow transition-all",
+                      "absolute top-0.5 h-5 w-5 rounded-full bg-surface shadow transition-all",
                       timerEnabled ? "left-[22px]" : "left-0.5"
                     )}
                   />
@@ -509,10 +497,10 @@ export default function HomeClient({
       {/* Histórico */}
       {mounted && history.length > 0 && (
         <section className="mt-10 animate-fade-in">
-          <div className="rounded-2xl border border-zinc-200 bg-white shadow-sm">
+          <div className="rounded-2xl border border-zinc-200 bg-surface shadow-sm">
             <div className="flex items-center justify-between border-b border-zinc-100 p-5">
               <h2 className="flex items-center gap-2 font-semibold text-zinc-900">
-                <History className="h-5 w-5 text-indigo-600" aria-hidden />
+                <History className="h-5 w-5 text-indigo-400" aria-hidden />
                 Resultados anteriores
               </h2>
               <button
