@@ -35,10 +35,19 @@ async function fetchJson(url, attempt = 1) {
   return res.json();
 }
 
+function hasBrokenImage(q) {
+  const parts = [q.context ?? "", ...(q.files ?? [])];
+  for (const a of q.alternatives ?? []) if (a.file) parts.push(a.file);
+  // A enem.dev troca imagens perdidas pelo placeholder /broken-image.svg;
+  // a questão fica irrespondível, então é descartada.
+  return parts.join(" ").includes("broken-image");
+}
+
 function isUsable(q) {
   if (!q.correctAlternative || !/^[A-E]$/.test(q.correctAlternative)) return false;
   const context = (q.context ?? "").trim();
   if (context.length < 10) return false;
+  if (hasBrokenImage(q)) return false;
   if (!Array.isArray(q.alternatives) || q.alternatives.length !== 5) return false;
   const lettersOk = q.alternatives.every(
     (a) => /^[A-E]$/.test(a.letter) && ((a.text ?? "").trim() !== "" || (a.file ?? "") !== "")

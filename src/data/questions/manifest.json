@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-11T15:51:11.568Z",
+  "generatedAt": "2026-06-11T16:22:00.854Z",
   "source": "https://enem.dev",
   "years": [
     2019,
@@ -55,13 +55,13 @@
     },
     "2023": {
       "total": 186,
-      "kept": 139,
-      "dropped": 47,
+      "kept": 133,
+      "dropped": 53,
       "byDiscipline": {
-        "linguagens": 36,
-        "ciencias-humanas": 38,
+        "linguagens": 33,
+        "ciencias-humanas": 36,
         "ciencias-natureza": 23,
-        "matematica": 42
+        "matematica": 41
       }
     }
   }
