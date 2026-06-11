@@ -15,60 +15,78 @@
  * botão permanecem intactos.
  */
 @theme {
-  --color-surface: #18181b;
+  /*
+   * Conforto de leitura é prioridade: o usuário passa horas lendo enunciados.
+   * Por isso o fundo não é preto absoluto, o texto corrido nunca é branco
+   * puro e todos os acentos (primária e cores de área) são dessaturados.
+   */
+  --color-surface: #1a1a1f;
 
-  --color-zinc-50: #09090b;
-  --color-zinc-100: #1f1f23;
-  --color-zinc-200: #2e2e34;
-  --color-zinc-300: #46464e;
-  --color-zinc-400: #84848e;
-  --color-zinc-500: #a3a3ad;
-  --color-zinc-600: #c2c2ca;
-  --color-zinc-700: #dadade;
-  --color-zinc-800: #eaeaee;
-  --color-zinc-900: #f4f4f5;
-  --color-zinc-950: #ffffff;
+  --color-zinc-50: #101014;
+  --color-zinc-100: #232329;
+  --color-zinc-200: #313138;
+  --color-zinc-300: #484851;
+  --color-zinc-400: #82828c;
+  --color-zinc-500: #9a9aa4;
+  --color-zinc-600: #b3b3bc;
+  --color-zinc-700: #c8c8cf;
+  --color-zinc-800: #d9d9df;
+  --color-zinc-900: #e7e7eb;
+  --color-zinc-950: #f5f5f7;
 
-  --color-indigo-50: #1d1b38;
-  --color-indigo-100: #262357;
-  --color-indigo-200: #393470;
-  --color-indigo-300: #4f48a3;
-  --color-indigo-700: #a5b4fc;
+  --color-indigo-50: #1e1e30;
+  --color-indigo-100: #272745;
+  --color-indigo-200: #3a3a63;
+  --color-indigo-300: #4d4d89;
+  --color-indigo-400: #8a90d9;
+  --color-indigo-500: #6466cd;
+  --color-indigo-600: #5153c0;
+  --color-indigo-700: #a4aade;
 
-  --color-rose-50: #2b1019;
-  --color-rose-100: #401726;
-  --color-rose-200: #572033;
-  --color-rose-300: #8c2b50;
-  --color-rose-700: #fda4af;
+  --color-rose-50: #2a131a;
+  --color-rose-100: #3d1a26;
+  --color-rose-200: #532333;
+  --color-rose-300: #80304d;
+  --color-rose-500: #d65d72;
+  --color-rose-700: #dfa3ac;
 
-  --color-amber-50: #2a1f06;
-  --color-amber-100: #3b2c09;
-  --color-amber-200: #55400e;
-  --color-amber-300: #8a6914;
-  --color-amber-600: #fbbf24;
-  --color-amber-700: #fcd34d;
+  --color-amber-50: #292008;
+  --color-amber-100: #382c0c;
+  --color-amber-200: #514012;
+  --color-amber-300: #80661d;
+  --color-amber-400: #d3a64a;
+  --color-amber-500: #cf9d3e;
+  --color-amber-600: #d6b160;
+  --color-amber-700: #dcc282;
 
-  --color-emerald-50: #07271c;
-  --color-emerald-100: #0a3325;
-  --color-emerald-200: #11503a;
-  --color-emerald-300: #157a52;
-  --color-emerald-700: #6ee7b7;
-  --color-emerald-800: #a7f3d0;
+  --color-emerald-50: #0a241b;
+  --color-emerald-100: #0e3124;
+  --color-emerald-200: #154d39;
+  --color-emerald-300: #1d7252;
+  --color-emerald-400: #4fb48f;
+  --color-emerald-500: #379f7e;
+  --color-emerald-600: #0f8a66;
+  --color-emerald-700: #8ed0b5;
+  --color-emerald-800: #b3e0cc;
 
-  --color-sky-50: #082636;
-  --color-sky-100: #0b3349;
-  --color-sky-200: #135070;
-  --color-sky-700: #7dd3fc;
+  --color-sky-50: #0c2433;
+  --color-sky-100: #103145;
+  --color-sky-200: #184c68;
+  --color-sky-500: #4596c2;
+  --color-sky-700: #92c3dd;
 
-  --color-red-50: #2d1114;
-  --color-red-100: #40191d;
-  --color-red-200: #582329;
-  --color-red-300: #7f3038;
-  --color-red-600: #f87171;
-  --color-red-700: #fca5a5;
+  --color-red-50: #2c1316;
+  --color-red-100: #3e1b1f;
+  --color-red-200: #54262b;
+  --color-red-300: #793339;
+  --color-red-400: #d96b6b;
+  --color-red-500: #d65c5c;
+  --color-red-600: #e08989;
+  --color-red-700: #e8a8a8;
 
-  --color-violet-100: #2b1c44;
-  --color-violet-700: #c4b5fd;
+  --color-violet-100: #2a2040;
+  --color-violet-600: #6a58c9;
+  --color-violet-700: #bdb3e6;
 }
 
 html {
