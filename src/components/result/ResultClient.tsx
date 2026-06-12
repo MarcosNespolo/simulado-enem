@@ -88,11 +88,13 @@ function ReviewItem({
   answer,
   status,
   hintsUsed,
+  studiedHere,
 }: {
   question: SimuladoQuestion;
   answer: Letter | undefined;
   status: QuestionStatus;
   hintsUsed: number;
+  studiedHere: boolean;
 }) {
   const [open, setOpen] = useState(false);
   const style = AREAS[question.discipline];
@@ -118,6 +120,15 @@ function ReviewItem({
         <span className="min-w-0 flex-1 truncate text-sm text-zinc-600">
           {style.short} · ENEM {question.year}
         </span>
+        {studiedHere && (
+          <span
+            className="flex shrink-0 items-center rounded-md bg-indigo-100 px-2 py-1 text-xs font-semibold text-indigo-700"
+            title="Você estudou este conteúdo durante a prova"
+          >
+            <BookOpen className="h-3 w-3" aria-hidden />
+            <span className="sr-only">Estudada durante a prova</span>
+          </span>
+        )}
         {hintsUsed > 0 && (
           <span
             className="flex shrink-0 items-center gap-1 rounded-md bg-amber-100 px-2 py-1 text-xs font-semibold text-amber-700"
@@ -282,6 +293,7 @@ export default function ResultClient() {
         answers: {},
         flagged: [],
         hints: {},
+        studied: [],
         currentIndex: 0,
         elapsedSeconds: 0,
         totalSeconds: result.config.timerEnabled
@@ -426,12 +438,27 @@ export default function ResultClient() {
           ) : (
             <>
               <p className="mt-1 text-sm text-zinc-600">
-                Com base nas questões que você errou ou deixou em branco, estes
-                são os assuntos que merecem atenção primeiro:
+                Com base nos erros, nas dicas e no que você precisou estudar
+                durante a prova, estes são os assuntos que merecem atenção
+                primeiro:
               </p>
               <ol className="mt-4 space-y-3">
                 {result.recommendations.map((rec, i) => {
                   const style = AREAS[rec.discipline];
+                  const parts: string[] = [];
+                  if (rec.missed > 0) {
+                    parts.push(`${rec.missed} ${rec.missed === 1 ? "perdida" : "perdidas"}`);
+                  }
+                  if (rec.hintedCorrect > 0) {
+                    parts.push(
+                      `${rec.hintedCorrect} ${rec.hintedCorrect === 1 ? "acerto" : "acertos"} com dica`
+                    );
+                  }
+                  if (rec.studiedCount > 0) {
+                    parts.push(
+                      `${rec.studiedCount} ${rec.studiedCount === 1 ? "estudada" : "estudadas"} na prova`
+                    );
+                  }
                   return (
                     <li
                       key={`${rec.discipline}-${rec.topic}`}
@@ -453,11 +480,7 @@ export default function ResultClient() {
                             {style.short}
                           </span>
                           <span className="text-xs text-zinc-500">
-                            {rec.missed > 0 &&
-                              `${rec.missed} ${rec.missed === 1 ? "perdida" : "perdidas"}`}
-                            {rec.missed > 0 && rec.hintedCorrect > 0 && " · "}
-                            {rec.hintedCorrect > 0 &&
-                              `${rec.hintedCorrect} ${rec.hintedCorrect === 1 ? "acerto" : "acertos"} com dica`}
+                            {parts.join(" · ")}
                             {` de ${rec.total} ${rec.total === 1 ? "questão" : "questões"}`}
                           </span>
                         </div>
@@ -516,6 +539,7 @@ export default function ResultClient() {
                   answer={result.answers[q.number]}
                   status={statusOf(q, result.answers)}
                   hintsUsed={result.hints?.[q.number] ?? 0}
+                  studiedHere={(result.studied ?? []).includes(q.number)}
                 />
               ))}
             </ul>

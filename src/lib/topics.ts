@@ -302,15 +302,17 @@ function hintFor(discipline: Discipline, topic: string): string {
 }
 
 /**
- * Gera recomendações de estudo a partir das questões erradas, em branco ou
- * acertadas com ajuda de dicas. O peso de revisão prioriza o erro: cada
- * erro/branco vale 1 (mais 0,25 por dica gasta nele); um acerto com dicas
- * vale 0,25 por dica usada.
+ * Gera recomendações de estudo a partir das questões erradas, em branco,
+ * acertadas com ajuda de dicas ou estudadas durante a prova. Pesos:
+ * erro/branco = 1; cada dica gasta = 0,25; abrir o modo estudo = 0,35
+ * (mais que 1 dica, menos que 2 — precisar da aula indica lacuna maior que
+ * um empurrão, mas errar continua sendo o sinal mais forte).
  */
 export function buildRecommendations(
   questions: SimuladoQuestion[],
   answers: Record<number, Letter>,
-  hints: Record<number, number> = {}
+  hints: Record<number, number> = {},
+  studied: number[] = []
 ): Recommendation[] {
   const byTopic = new Map<string, Recommendation>();
 
@@ -324,6 +326,7 @@ export function buildRecommendations(
         topic,
         missed: 0,
         hintedCorrect: 0,
+        studiedCount: 0,
         total: 0,
         weight: 0,
         hint: hintFor(q.discipline, topic),
@@ -334,14 +337,16 @@ export function buildRecommendations(
 
     const answer = answers[q.number];
     const hintLevel = hints[q.number] ?? 0;
+    const wasStudied = studied.includes(q.number);
     const isMissed = !answer || answer !== q.correctAlternative;
 
+    if (wasStudied) rec.studiedCount += 1;
     if (isMissed) {
       rec.missed += 1;
-      rec.weight += 1 + hintLevel * 0.25;
-    } else if (hintLevel > 0) {
-      rec.hintedCorrect += 1;
-      rec.weight += hintLevel * 0.25;
+      rec.weight += 1 + hintLevel * 0.25 + (wasStudied ? 0.35 : 0);
+    } else if (hintLevel > 0 || wasStudied) {
+      if (hintLevel > 0) rec.hintedCorrect += 1;
+      rec.weight += hintLevel * 0.25 + (wasStudied ? 0.35 : 0);
     }
   }
 

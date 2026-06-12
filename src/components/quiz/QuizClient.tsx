@@ -42,6 +42,7 @@ const QuestionView = memo(function QuestionView({
   answer,
   flagged,
   hintLevel,
+  studied,
   onSelect,
   onToggleFlag,
   onStudy,
@@ -51,6 +52,7 @@ const QuestionView = memo(function QuestionView({
   answer: Letter | undefined;
   flagged: boolean;
   hintLevel: number;
+  studied: boolean;
   onSelect: (letter: Letter) => void;
   onToggleFlag: () => void;
   onStudy: () => void;
@@ -87,15 +89,6 @@ const QuestionView = memo(function QuestionView({
           )}
         </div>
         <div className="flex shrink-0 gap-1.5">
-          <button
-            type="button"
-            onClick={onStudy}
-            title="Estudar este conteúdo (E)"
-            className="flex h-9 w-9 items-center justify-center rounded-lg border border-zinc-200 text-zinc-400 transition hover:border-indigo-300 hover:text-indigo-400"
-          >
-            <BookOpen className="h-4 w-4" aria-hidden />
-            <span className="sr-only">Estudar o conteúdo desta questão</span>
-          </button>
           <button
             type="button"
             onClick={onToggleFlag}
@@ -210,19 +203,36 @@ const QuestionView = memo(function QuestionView({
             </div>
           </div>
         ))}
-        {hintLevel < MAX_HINTS && (
+        <div className="flex flex-wrap items-center gap-2">
+          {hintLevel < MAX_HINTS && (
+            <button
+              type="button"
+              onClick={onHint}
+              title="Pedir uma dica (D)"
+              className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-zinc-200 px-3 text-sm font-medium text-zinc-500 transition hover:border-amber-300 hover:text-amber-600"
+            >
+              <Lightbulb className="h-4 w-4" aria-hidden />
+              {hintLevel === 0 ? "Pedir uma dica" : `Pedir outra dica (${hintLevel}/${MAX_HINTS})`}
+            </button>
+          )}
           <button
             type="button"
-            onClick={onHint}
-            className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-zinc-200 px-3 text-sm font-medium text-zinc-500 transition hover:border-amber-300 hover:text-amber-600"
+            onClick={onStudy}
+            title="Estudar este conteúdo (E)"
+            className={cx(
+              "inline-flex h-9 items-center gap-1.5 rounded-lg border px-3 text-sm font-medium transition",
+              studied
+                ? "border-indigo-300 bg-indigo-50/70 text-indigo-500 hover:bg-indigo-50"
+                : "border-zinc-200 text-zinc-500 hover:border-indigo-300 hover:text-indigo-400"
+            )}
           >
-            <Lightbulb className="h-4 w-4" aria-hidden />
-            {hintLevel === 0 ? "Pedir uma dica" : `Pedir outra dica (${hintLevel}/${MAX_HINTS})`}
+            <BookOpen className="h-4 w-4" aria-hidden />
+            {studied ? "Estudar de novo" : "Estudar o conteúdo"}
           </button>
-        )}
-        {hintLevel > 0 && (
+        </div>
+        {(hintLevel > 0 || studied) && (
           <p className="mt-2 text-xs text-zinc-400">
-            Dicas usadas entram no diagnóstico do resultado (pesam menos que um erro).
+            Dicas e estudo entram no diagnóstico do resultado (um erro pesa mais).
           </p>
         )}
       </div>
@@ -554,8 +564,8 @@ export default function QuizClient() {
       router.replace("/");
       return;
     }
-    // Migração: simulados salvos antes do recurso de dicas não têm o campo.
-    const migrated = { ...saved, hints: saved.hints ?? {} };
+    // Migração: simulados salvos antes de dicas/estudo não têm os campos.
+    const migrated = { ...saved, hints: saved.hints ?? {}, studied: saved.studied ?? [] };
     simuladoRef.current = migrated;
     elapsedRef.current = migrated.elapsedSeconds;
     // Carga única do localStorage após a hidratação; o re-render é intencional.
@@ -689,7 +699,14 @@ export default function QuizClient() {
   // Callback estável: passar uma arrow inline quebraria o memo do
   // QuestionView e re-renderizaria a questão (e suas imagens) a cada
   // tick do cronômetro.
-  const openStudy = useCallback(() => setStudyOpen(true), []);
+  const openStudy = useCallback(() => {
+    setStudyOpen(true);
+    const s = simuladoRef.current;
+    if (!s) return;
+    const number = s.questions[s.currentIndex].number;
+    const studied = s.studied ?? [];
+    if (!studied.includes(number)) update({ studied: [...studied, number] });
+  }, [update]);
 
   // Atalhos de teclado.
   useEffect(() => {
@@ -731,7 +748,7 @@ export default function QuizClient() {
       } else if (key === "m") {
         setMapOpen((v) => !v);
       } else if (key === "e") {
-        setStudyOpen(true);
+        openStudy();
       } else if (key === "d") {
         requestHint();
       } else if (e.key === " " && s.config.timerEnabled) {
@@ -741,7 +758,7 @@ export default function QuizClient() {
     }
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [loaded, mapOpen, confirmOpen, timeUp, paused, studyOpen, select, goTo, toggleFlag, requestHint]);
+  }, [loaded, mapOpen, confirmOpen, timeUp, paused, studyOpen, select, goTo, toggleFlag, requestHint, openStudy]);
 
   if (!loaded || !simulado) {
     return (
@@ -859,6 +876,7 @@ export default function QuizClient() {
           answer={simulado.answers[question.number]}
           flagged={simulado.flagged.includes(question.number)}
           hintLevel={simulado.hints?.[question.number] ?? 0}
+          studied={(simulado.studied ?? []).includes(question.number)}
           onSelect={select}
           onToggleFlag={toggleFlag}
           onStudy={openStudy}

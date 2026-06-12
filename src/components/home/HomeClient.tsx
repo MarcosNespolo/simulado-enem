@@ -204,6 +204,7 @@ export default function HomeClient({
         answers: {},
         flagged: [],
         hints: {},
+        studied: [],
         currentIndex: 0,
         elapsedSeconds: 0,
         totalSeconds: config.timerEnabled

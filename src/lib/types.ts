@@ -51,6 +51,8 @@ export interface Simulado {
   flagged: number[];
   /** Níveis de dica usados por questão (number → 0 a 3). */
   hints: Record<number, number>;
+  /** Questões em que o modo estudo foi aberto. */
+  studied: number[];
   currentIndex: number;
   elapsedSeconds: number;
   totalSeconds: number; // limite quando config.timerEnabled
@@ -72,6 +74,8 @@ export interface Recommendation {
   missed: number;
   /** Questões acertadas com ajuda de dicas. */
   hintedCorrect: number;
+  /** Questões em que o modo estudo foi usado. */
+  studiedCount: number;
   total: number;
   /** Peso de revisão: erro vale mais que dica (usado para ordenar). */
   weight: number;
@@ -93,6 +97,7 @@ export interface SimuladoResult {
   questions: SimuladoQuestion[];
   answers: Record<number, Letter>;
   hints: Record<number, number>;
+  studied: number[];
 }
 
 export interface HistoryEntry {
