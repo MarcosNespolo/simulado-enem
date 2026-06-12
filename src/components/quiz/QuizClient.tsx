@@ -393,7 +393,7 @@ function StudySheet({
         role="dialog"
         aria-modal="true"
         aria-label="Modo estudo"
-        className="absolute inset-x-0 bottom-0 flex max-h-[88dvh] flex-col rounded-t-2xl bg-surface shadow-xl animate-sheet-up sm:inset-y-0 sm:left-auto sm:right-0 sm:max-h-none sm:w-[440px] sm:rounded-none"
+        className="absolute inset-x-0 bottom-0 flex max-h-[88dvh] flex-col rounded-t-2xl bg-surface shadow-xl animate-sheet-up sm:inset-y-0 sm:left-auto sm:right-0 sm:max-h-none sm:w-[620px] sm:max-w-[92vw] sm:rounded-none"
       >
         <div className="flex items-center justify-between gap-3 border-b border-zinc-100 p-4 sm:p-5">
           <div className="flex min-w-0 items-center gap-2.5">
@@ -425,7 +425,7 @@ function StudySheet({
           </p>
         )}
 
-        <div className="flex-1 space-y-5 overflow-y-auto p-4 sm:p-5">
+        <div className="flex-1 space-y-5 overflow-y-auto p-4 sm:p-6">
           {conteudo ? (
             <>
               <p className="rounded-xl bg-zinc-100/60 p-3.5 text-[15px] font-medium leading-relaxed text-zinc-800">
