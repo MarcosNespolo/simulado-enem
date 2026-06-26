@@ -188,7 +188,7 @@ const QuestionView = memo(function QuestionView({
               <p className="mb-1.5 text-[11px] font-bold uppercase tracking-wide text-amber-600">
                 Dica {dica.level} · {dica.titulo}
               </p>
-              <Markdown math className="hint-content">
+              <Markdown math className="hint-content text-zinc-700">
                 {dica.texto}
               </Markdown>
             </div>
@@ -348,6 +348,15 @@ function QuestionMap({
 /* Modo estudo                                                         */
 /* ------------------------------------------------------------------ */
 
+interface QuestionStudy {
+  conceito: string;
+  ideiaCentral: string;
+  aula: { titulo: string; texto: string }[];
+  exemplo: { enunciado: string; passos: string[]; resposta: string };
+  pontosChave: string[];
+  comoCaiNoEnem: string;
+}
+
 function StudySheet({
   question,
   timerEnabled,
@@ -359,8 +368,33 @@ function StudySheet({
 }) {
   const [copied, setCopied] = useState(false);
   const topic = tagQuestion(question);
-  const conteudo = CONTEUDOS[topic];
+  const fallback = CONTEUDOS[topic];
   const style = AREAS[question.discipline];
+
+  // Conteúdo específico da questão é grande (1+ MB no total); carrega sob demanda
+  // só quando o modo estudo abre, em vez de entrar no bundle do simulado.
+  const [curated, setCurated] = useState<QuestionStudy | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let alive = true;
+    import("@/data/question-study.json")
+      .then((mod) => {
+        if (!alive) return;
+        const all = mod.default as unknown as Record<string, QuestionStudy>;
+        setCurated(all[question.id] ?? null);
+        setLoading(false);
+      })
+      .catch(() => {
+        if (alive) setLoading(false);
+      });
+    return () => {
+      alive = false;
+    };
+  }, [question.id]);
+
+  const conteudo = curated ?? fallback;
+  const subtitulo = curated?.conceito ?? topic;
 
   async function copyPrompt() {
     try {
@@ -394,7 +428,7 @@ function StudySheet({
             <div className="min-w-0">
               <h2 className="font-semibold text-zinc-900">Modo estudo</h2>
               <p className="truncate text-xs text-zinc-500">
-                {style.short} · {topic}
+                {style.short} · {subtitulo}
               </p>
             </div>
           </div>
@@ -417,16 +451,28 @@ function StudySheet({
         )}
 
         <div className="flex-1 space-y-5 overflow-y-auto p-4 sm:p-6">
-          {conteudo ? (
+          {loading ? (
+            <div className="flex items-center gap-2 text-sm text-zinc-500">
+              <span
+                className="h-4 w-4 animate-spin rounded-full border-2 border-zinc-300 border-t-transparent"
+                aria-hidden
+              />
+              Carregando o conteúdo...
+            </div>
+          ) : conteudo ? (
             <>
-              <p className="rounded-xl bg-zinc-100/60 p-3.5 text-[15px] font-medium leading-relaxed text-zinc-800">
-                {conteudo.ideiaCentral}
-              </p>
+              <div className="rounded-xl bg-zinc-100/60 p-3.5">
+                <Markdown math className="hint-content font-medium text-zinc-800">
+                  {conteudo.ideiaCentral}
+                </Markdown>
+              </div>
 
               {conteudo.aula.map((secao) => (
                 <div key={secao.titulo}>
                   <h3 className="mb-1.5 font-semibold text-zinc-900">{secao.titulo}</h3>
-                  <p className="text-[15px] leading-relaxed text-zinc-600">{secao.texto}</p>
+                  <Markdown math className="hint-content text-zinc-600">
+                    {secao.texto}
+                  </Markdown>
                 </div>
               ))}
 
@@ -435,23 +481,27 @@ function StudySheet({
                   <h3 className="text-xs font-semibold uppercase tracking-wide text-emerald-700">
                     Exemplo resolvido
                   </h3>
-                  <p className="mt-2 text-sm font-medium leading-relaxed text-zinc-800">
+                  <Markdown math className="hint-content mt-2 font-medium text-zinc-800">
                     {conteudo.exemplo.enunciado}
-                  </p>
+                  </Markdown>
                   <ol className="mt-3 space-y-2">
                     {conteudo.exemplo.passos.map((passo, i) => (
-                      <li key={passo} className="flex gap-2.5 text-sm leading-relaxed text-zinc-600">
-                        <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-zinc-100 text-[10px] font-bold text-zinc-500">
+                      <li key={i} className="flex gap-2.5">
+                        <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-zinc-100 text-[10px] font-bold text-zinc-500">
                           {i + 1}
                         </span>
-                        {passo}
+                        <Markdown math className="hint-content min-w-0 flex-1 text-zinc-600">
+                          {passo}
+                        </Markdown>
                       </li>
                     ))}
                   </ol>
-                  <p className="mt-3 flex gap-2 rounded-lg bg-emerald-50/70 p-2.5 text-sm font-medium leading-relaxed text-emerald-700">
+                  <div className="mt-3 flex gap-2 rounded-lg bg-emerald-50/70 p-2.5 text-emerald-700">
                     <Check className="mt-0.5 h-4 w-4 shrink-0" aria-hidden />
-                    {conteudo.exemplo.resposta}
-                  </p>
+                    <Markdown math className="hint-content min-w-0 flex-1 font-medium">
+                      {conteudo.exemplo.resposta}
+                    </Markdown>
+                  </div>
                 </div>
               )}
 
@@ -460,10 +510,12 @@ function StudySheet({
                   O que dominar
                 </h3>
                 <ul className="space-y-2">
-                  {conteudo.pontosChave.map((ponto) => (
-                    <li key={ponto} className="flex gap-2 text-sm leading-relaxed text-zinc-600">
+                  {conteudo.pontosChave.map((ponto, i) => (
+                    <li key={i} className="flex gap-2">
                       <Check className="mt-0.5 h-4 w-4 shrink-0 text-emerald-400" aria-hidden />
-                      {ponto}
+                      <Markdown math className="hint-content min-w-0 flex-1 text-zinc-600">
+                        {ponto}
+                      </Markdown>
                     </li>
                   ))}
                 </ul>
@@ -472,9 +524,9 @@ function StudySheet({
                 <h3 className="text-xs font-semibold uppercase tracking-wide text-indigo-400">
                   Como cai no ENEM
                 </h3>
-                <p className="mt-1.5 text-sm leading-relaxed text-zinc-600">
+                <Markdown math className="hint-content mt-1.5 text-zinc-600">
                   {conteudo.comoCaiNoEnem}
-                </p>
+                </Markdown>
               </div>
             </>
           ) : (
