@@ -1,15 +1,31 @@
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import remarkMath from "remark-math";
+import rehypeKatex from "rehype-katex";
 
 /**
- * Renderiza o markdown dos enunciados (texto, imagens, tabelas) com os
- * estilos de .question-content definidos em globals.css.
+ * Renderiza markdown com os estilos de .question-content (texto, imagens,
+ * tabelas) definidos em globals.css.
+ *
+ * `math`: ativa LaTeX ($...$ e $$...$$) via remark-math + KaTeX. Fica DESLIGADO
+ * por padrão porque o enunciado das questões usa "R$" (cifrão) em valores, que
+ * seria interpretado como fórmula. Use `math` apenas em conteúdo controlado
+ * (ex.: dicas), onde valores em dinheiro vêm escapados como "R\$".
  */
-export function Markdown({ children }: { children: string }) {
+export function Markdown({
+  children,
+  math = false,
+  className = "question-content",
+}: {
+  children: string;
+  math?: boolean;
+  className?: string;
+}) {
   return (
-    <div className="question-content">
+    <div className={className}>
       <ReactMarkdown
-        remarkPlugins={[remarkGfm]}
+        remarkPlugins={math ? [remarkGfm, remarkMath] : [remarkGfm]}
+        rehypePlugins={math ? [rehypeKatex] : []}
         components={{
           img: ({ src, alt }) => (
             // eslint-disable-next-line @next/next/no-img-element

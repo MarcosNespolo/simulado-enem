@@ -199,7 +199,12 @@ const QuestionView = memo(function QuestionView({
               <p className="text-[11px] font-bold uppercase tracking-wide text-amber-600">
                 Dica {dica.level} · {dica.titulo}
               </p>
-              <p className="mt-0.5 text-sm leading-relaxed text-zinc-700">{dica.texto}</p>
+              <Markdown
+                math
+                className="mt-0.5 text-sm leading-relaxed text-zinc-700 [&_p]:my-0 [&_p+p]:mt-1.5 [&_.katex-display]:my-1.5 [&_.katex-display]:overflow-x-auto [&_.katex-display]:overflow-y-hidden"
+              >
+                {dica.texto}
+              </Markdown>
             </div>
           </div>
         ))}
