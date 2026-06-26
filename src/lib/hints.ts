@@ -4,14 +4,16 @@ import { CONTEUDOS } from "@/data/conteudos";
 import CURATED_RAW from "@/data/question-hints.json";
 
 /**
- * Dicas progressivas por questão (até 3 níveis):
- *  1. Direcionamento: o que o comando desta questão pede + como atacar.
- *  2. Eliminação: descarta 2 alternativas erradas.
- *  3. Quase resposta: descarta mais uma e aponta o trecho-chave do enunciado.
+ * Dicas progressivas por questão (até 3 níveis), pensadas como uma resolução
+ * guiada que leva o aluno até a resposta:
+ *  1. Por onde começar: o que a questão pede + o conceito/fórmula inicial.
+ *  2. Montando a solução: identifica os valores / o trecho-chave e desenvolve.
+ *  3. Chegando na resposta: conclui o cálculo ou o raciocínio até o resultado.
  *
- * Quando existir dica curada para a questão em src/data/question-hints.json
- * (gerada por scripts/generate-hints.mjs), ela substitui o texto heurístico.
- * A eliminação visual de alternativas vale nos dois casos.
+ * O texto vem das dicas curadas em src/data/question-hints.json (geradas por
+ * scripts/generate-hints.mjs, com Markdown + LaTeX). Quando não há dica curada
+ * para a questão, caímos numa heurística mais simples (direcionar + eliminar).
+ * A eliminação visual de alternativas continua valendo como apoio.
  */
 
 const CURATED = CURATED_RAW as Record<string, string[]>;
@@ -123,22 +125,22 @@ function dica1(question: SimuladoQuestion): string {
 }
 
 function dica2(question: SimuladoQuestion): string {
-  const eliminated = eliminatedFor(question, 2);
-  const base = `Descarte as alternativas ${listLetters(eliminated)}.`;
   const curated = CURATED[question.id]?.[1];
-  if (curated) return `${base} ${curated}`;
-  return `${base} Compare as restantes com o que o comando pede: alternativa que extrapola o texto ou responde outra pergunta está fora.`;
+  if (curated) return curated;
+
+  const eliminated = eliminatedFor(question, 2);
+  return `Descarte as alternativas ${listLetters(eliminated)}. Compare as restantes com o que o comando pede: alternativa que extrapola o texto ou responde outra pergunta está fora.`;
 }
 
 function dica3(question: SimuladoQuestion): string {
+  const curated = CURATED[question.id]?.[2];
+  if (curated) return curated;
+
   const eliminated = eliminatedFor(question, 3);
   const remaining = question.alternatives
     .map((a) => a.letter)
     .filter((letter) => !eliminated.includes(letter));
   const base = `Ficou entre ${listLetters(remaining)}.`;
-
-  const curated = CURATED[question.id]?.[2];
-  if (curated) return `${base} ${curated}`;
 
   const trecho = trechoChave(question);
   if (trecho) {
@@ -151,8 +153,8 @@ function dica3(question: SimuladoQuestion): string {
 export function hintsFor(question: SimuladoQuestion, level: number): HintInfo[] {
   const revealed: HintInfo[] = [];
   if (level >= 1) revealed.push({ level: 1, titulo: "Por onde começar", texto: dica1(question) });
-  if (level >= 2) revealed.push({ level: 2, titulo: "Eliminando alternativas", texto: dica2(question) });
-  if (level >= 3) revealed.push({ level: 3, titulo: "Quase lá", texto: dica3(question) });
+  if (level >= 2) revealed.push({ level: 2, titulo: "Montando a solução", texto: dica2(question) });
+  if (level >= 3) revealed.push({ level: 3, titulo: "Chegando na resposta", texto: dica3(question) });
   return revealed;
 }
 
