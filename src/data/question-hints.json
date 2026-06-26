@@ -595,9 +595,9 @@
   "Isolando $R\\$: $R \\le 100\\% - 20\\% = 80\\%$. Para oferecer o maior percentual possível, ela usa o máximo: $R=\\mathbf{80\\%}$."
  ],
  "2019-139-pt": [
-  "A questão pede o gráfico que descreve o valor pago $P$ em função do volume $V$ (depende das figuras). O método é montar o preço por trechos. Até $6\\,m^3$ o valor é fixo de $R\\$\\,12{,}00$ (uma linha reta horizontal, sem subir).",
-  "De $6$ a $10\\,m^3$ cobra-se $R\\$\\,3{,}00$ por $m^3$ que passar de 6: o gráfico vira uma reta subindo com inclinação 3. Acima de $10\\,m^3$ cobra-se $R\\$\\,6{,}00$ por $m^3$ extra: a reta sobe mais 'íngreme' (inclinação 6, o dobro). Calcule alguns pontos: em $6\\,m^3 \\to 12$; em $10\\,m^3 \\to 12+4\\times3=24$; em $15\\,m^3 \\to 24+5\\times6=54$.",
-  "O gráfico certo começa horizontal em $R\\$\\,12{,}00$ até $6\\,m^3$, depois sobe em reta até $R\\$\\,24{,}00$ em $10\\,m^3$, e por fim sobe ainda mais inclinado até $R\\$\\,54{,}00$ em $15\\,m^3$. Essa é a figura correta, com os três trechos de inclinação crescente."
+  "A questão pede o gráfico que descreve o valor pago $P$ em função do volume $V$ (depende das figuras). O método é montar o preço por trechos. Até $6\\,\\text{m}^3$ o valor é fixo de R\\$ 12,00 (uma linha reta horizontal, sem subir).",
+  "De $6$ a $10\\,\\text{m}^3$ cobra-se R\\$ 3,00 por $\\text{m}^3$ que passar de 6: o gráfico vira uma reta subindo com inclinação 3. Acima de $10\\,\\text{m}^3$ cobra-se R\\$ 6,00 por $\\text{m}^3$ extra: a reta sobe mais 'íngreme' (inclinação 6, o dobro). Calcule alguns pontos: em $6\\,\\text{m}^3 \\to 12$; em $10\\,\\text{m}^3 \\to 12+4\\times3=24$; em $15\\,\\text{m}^3 \\to 24+5\\times6=54$.",
+  "O gráfico certo começa horizontal em R\\$ 12,00 até $6\\,\\text{m}^3$, depois sobe em reta até R\\$ 24,00 em $10\\,\\text{m}^3$, e por fim sobe ainda mais inclinado até R\\$ 54,00 em $15\\,\\text{m}^3$. Essa é a figura correta, com os três trechos de inclinação crescente."
  ],
  "2019-140-pt": [
   "A questão pede para escrever o número $0,00011$ em notação científica, que é a forma $1,1 \\times 10^{n}$. Notação científica deixa um único algarismo diferente de zero antes da vírgula, e o expoente conta quantas casas a vírgula andou.",
@@ -651,11 +651,11 @@
  ],
  "2019-150-pt": [
   "A questão pede o valor à vista do produto, sabendo que ele será pago em duas parcelas e que o dinheiro vale $1\\%$ ao mês (juros compostos). O valor à vista é a soma das parcelas trazidas para hoje, ou seja, cada parcela dividida por $(1{,}01)$ elevado ao número de meses que falta para pagá-la.",
-  "A primeira parcela ($R\\$ 202,00$) vence em $1$ mês, então vale hoje $\\frac{202}{1,01}$. A segunda ($R\\$ 204,02$) vence em $2$ meses, valendo hoje $\\frac{204,02}{(1,01)^2}=\\frac{204,02}{1,0201}$.",
-  "Calculando cada uma: $$\\frac{202}{1,01}=200\\qquad\\text{e}\\qquad\\frac{204,02}{1,0201}=200.$$ Somando: $200+200=400$. O valor à vista é **$R\\$ 400,00$**."
+  "A primeira parcela (R\\$ 202,00) vence em $1$ mês, então vale hoje $\\frac{202}{1,01}$. A segunda (R\\$ 204,02) vence em $2$ meses, valendo hoje $\\frac{204,02}{(1,01)^2}=\\frac{204,02}{1,0201}$.",
+  "Calculando cada uma: $$\\frac{202}{1,01}=200\\qquad\\text{e}\\qquad\\frac{204,02}{1,0201}=200.$$ Somando: $200+200=400$. O valor à vista é **R\\$ 400,00**."
  ],
  "2019-151-pt": [
-  "A questão pede a porcentagem que cada sócio recebe da venda, proporcional ao que investiu. Some o total investido por cada um: os três primeiros entraram com $\\frac{1}{3}$ do primeiro milhão e com $\\frac{1}{4}$dos $R\\$ 800\\,000$; o quarto sócio entrou só com $\\frac{1}{4}$dos $R\\$ 800\\,000$.",
+  "A questão pede a porcentagem que cada sócio recebe da venda, proporcional ao que investiu. Some o total investido por cada um: os três primeiros entraram com $\\frac{1}{3}$ do primeiro milhão e com $\\frac{1}{4}$ dos R\\$ 800.000; o quarto sócio entrou só com $\\frac{1}{4}$ dos R\\$ 800.000.",
   "Investimento de cada sócio inicial: $\\frac{1\\,000\\,000}{3}\\approx 333\\,333$ mais $\\frac{800\\,000}{4}=200\\,000$, dando $\\approx 533\\,333$. Investimento do quarto sócio: só $\\frac{800\\,000}{4}=200\\,000$. O total investido foi $1\\,000\\,000+800\\,000=1\\,800\\,000$.",
   "Cada sócio inicial recebe $\\frac{533\\,333}{1\\,800\\,000}\\approx 0,296=29,6\\%$, e o quarto recebe $\\frac{200\\,000}{1\\,800\\,000}\\approx 0,1111=11,11\\%$. As porcentagens são **$29,60$ e $11,11$**, a resposta correta."
  ],
@@ -741,7 +741,7 @@
  ],
  "2019-168-pt": [
   "A questão pede a expressão do gasto semanal $Y$ em função do total de funcionários $X$. Há $1$ gerente (custo fixo) e os demais são diaristas. Cuidado: dos $X$ funcionários, $1$ é o gerente, então o número de diaristas é $X-1$.",
-  "O gerente custa $R\\$ 1\\,000$. Cada diarista trabalha $2$ dias a $R\\$ 80$, ou seja, $2\\times 80=160$ por semana. Com $(X-1)$ diaristas, o gasto com eles é $160\\,(X-1)=160X-160$.",
+  "O gerente custa R\\$ 1.000. Cada diarista trabalha $2$ dias a R\\$ 80, ou seja, $2\\times 80=160$ por semana. Com $(X-1)$ diaristas, o gasto com eles é $160\\,(X-1)=160X-160$.",
   "Somando tudo: $$Y=160X-160+1\\,000=160X+840.$$ A expressão correta é **$Y=160X+840$**."
  ],
  "2019-169-pt": [
@@ -780,7 +780,7 @@
   "Igualando volumes: $13,2\\pi=13\\pi\\cdot h$, então $$h=\\frac{13,2}{13}\\approx 1,015\\approx 1,00\\text{ m}.$$ A altura das colunas de água é **$1,00$ m**, a resposta correta."
  ],
  "2019-176-pt": [
-  "A questão pede o desconto percentual nos custos fixos. Primeiro calcule o orçamento inicial total somando as três partes: projeto $R\\$ 10\\,000$, custos fixos $R\\$ 40\\,000$ e a construção, que é $R\\$ 2\\,500$ por m² em $40$ m².",
+  "A questão pede o desconto percentual nos custos fixos. Primeiro calcule o orçamento inicial total somando as três partes: projeto R\\$ 10.000, custos fixos R\\$ 40.000 e a construção, que é R\\$ 2.500 por m² em $40$ m².",
   "Construção inicial: $2\\,500\\times 40=100\\,000$. Total inicial: $10\\,000+40\\,000+100\\,000=150\\,000$. Agora os novos valores: projeto cai $50\\%\\to 5\\,000$; o metro quadrado sobe $25\\%\\to 3\\,125$, então construção $=3\\,125\\times 40=125\\,000$. O novo total deve ser $10\\%$ menor que $150\\,000$, ou seja, $135\\,000$.",
   "Os custos fixos novos saem da conta $5\\,000+125\\,000+\\text{fixo}=135\\,000$, logo $\\text{fixo}=5\\,000$. O desconto sobre os $40\\,000$ originais é $\\frac{40\\,000-5\\,000}{40\\,000}=\\frac{35\\,000}{40\\,000}=0,875=87,5\\%$. O desconto é **$87,5\\%$**, a resposta correta."
  ],
@@ -1666,7 +1666,7 @@
  ],
  "2020-174-pt": [
   "Para cada trecho, multiplique a ÁREA (em $\\text{m}^2$) pela densidade certa: $4$ pessoas/$\\text{m}^2$ se andam na mesma direção, $5$ se se movimentam sem sair do lugar, $6$ se estão paradas. Calcule a área de cada trecho (MN, NO, OP e QR) usando as medidas da figura, escolhendo a densidade indicada para aquele trecho.",
-  "Some o número de pessoas de todos os trechos: $$\\text{total}=\\sum(\\text{área}\\times\\text{densidade}).$$ Depois, desconte $1.000$ pessoas para CADA carro de som que aparece na figura (subtraia $1.000\\times(\\text{nº de carros})$).",
+  "Some o número de pessoas de todos os trechos: $$\\text{total}=\\sum(\\text{área}\\times\\text{densidade}).$$ Depois, desconte $1.000$ pessoas para CADA carro de som que aparece na figura (subtraia $1.000\\times(\\text{n}^{\\circ}\\ \\text{de carros})$).",
   "Fazendo as multiplicações trecho a trecho, somando tudo e descontando os carros de som indicados, o número estimado de participantes resulta em **$104.000$ pessoas**."
  ],
  "2020-175-pt": [
@@ -2366,7 +2366,7 @@
  ],
  "2021-133-pt": [
   "A bateria é feita de TRÊS pilhas de lítio-iodo em SÉRIE. Em série, as tensões se somam. Então: (1) calcule a tensão de uma pilha pela diferença dos potenciais das semirreações; (2) multiplique por $3$; (3) veja no quadro qual aparelho funciona com essa força eletromotriz.",
-  "A tensão de uma pilha é $E=E_{cátodo}-E_{ânodo}$ (use os potenciais das semiequações dadas, que resultam em cerca de $1,2$ V para a pilha lítio-iodo). Com três em série: $$E_{total}=3\\times 1,2\\approx 3,6\\,\\text{V}.$$",
+  "A tensão de uma pilha é $E=E_{\\text{cátodo}}-E_{\\text{ânodo}}$ (use os potenciais das semiequações dadas, que resultam em cerca de $1,2$ V para a pilha lítio-iodo). Com três em série: $$E_{\\text{total}}=3\\times 1,2\\approx 3,6\\,\\text{V}.$$",
   "Agora compare $\\approx 3,6$ V com a faixa de tensão de cada dispositivo no quadro: o aparelho cuja faixa inclui esse valor é o adequado. Esse dispositivo é o de número **IV**."
  ],
  "2021-134-pt": [
@@ -3167,7 +3167,7 @@
  "2022-109-pt": [
   "A questão é sobre decaimento radioativo, que segue meia-vida: a cada meia-vida, a massa cai pela metade. Primeiro você precisa descobrir a meia-vida do $^{131}I$ olhando o quadro (em quanto tempo a massa de $12$ µg virou $6$ µg). Esse tempo é de aproximadamente $8$ dias.",
   "Em $40$ dias, conte quantas meias-vidas se passaram: $\\frac{40}{8} = 5$ meias-vidas. A cada uma, a massa é dividida por $2$, então no total ela é dividida por $2^5 = 32$.",
-  "Faça a conta final: $$m = \\frac{12}{2^5} = \\frac{12}{32} = 0{,}375 \\text{ µg}.$$ Isso é **aproximadamente $0{,}4$ µg**. Procure essa alternativa."
+  "Faça a conta final: $$m = \\frac{12}{2^5} = \\frac{12}{32} = 0{,}375\\,\\mu\\text{g}.$$ Isso é **aproximadamente $0{,}4$ µg**. Procure essa alternativa."
  ],
  "2022-110-pt": [
   "A questão descreve 4 espécies de sapos com estratégias bem diferentes de reprodução (muitos ovos sem cuidado, poucos ovos com muito cuidado dos pais, etc.). Você precisa achar a conclusão geral que todas essas estratégias mostram juntas.",
@@ -3366,7 +3366,7 @@
  ],
  "2022-150-pt": [
   "O saque é invalidado se a bola tocar o teto, ou seja, se a altura máxima da bola for maior que a altura do teto. A bola sobe descrevendo uma parábola; você precisa achar a altura máxima dela (o vértice) e lembrar que o eixo $x$ está a $1,5$ m do chão.",
-  "Encontre o ponto mais alto da parábola (o vértice $y_{máx}$). Esse valor é medido a partir do eixo $x$, que está a $1,5$ m do piso. Então a altura real da bola em relação ao chão é $H = y_{máx} + 1,5$.",
+  "Encontre o ponto mais alto da parábola (o vértice $y_{\\text{máx}}$). Esse valor é medido a partir do eixo $x$, que está a $1,5$ m do piso. Então a altura real da bola em relação ao chão é $H = y_{\\text{máx}} + 1,5$.",
   "Somando a altura máxima da parábola com os $1,5$ m, a bola chega a cerca de $20$ m do piso. Ela bate no teto sempre que o ginásio for mais baixo que isso: os de $17$, $18$, $19$ e $21$ m. O de $40$ m é alto demais. Logo o saque foi invalidado **nos ginásios I, II, III e IV**."
  ],
  "2022-151-pt": [
@@ -3406,7 +3406,7 @@
  ],
  "2022-158-pt": [
   "O modelo $p(t)$ dá quantas pessoas estão infectadas no mês $t$ (de $1$ a $12$). Você precisa achar o mês em que o número de infectados é o MAIOR. Como a função é uma parábola (formato $-at^2+bt+c$, que abre para baixo), o máximo está no vértice, no instante $t = -\\frac{b}{2a}$.",
-  "Aplique a fórmula do vértice $t_{máx}=-\\frac{b}{2a}$ com os coeficientes da função dada. Esse valor indica o mês de pico de infectados. Depois, veja qual das propostas (I a V) tem um intervalo de meses que inclui esse mês.",
+  "Aplique a fórmula do vértice $t_{\\text{máx}}=-\\frac{b}{2a}$ com os coeficientes da função dada. Esse valor indica o mês de pico de infectados. Depois, veja qual das propostas (I a V) tem um intervalo de meses que inclui esse mês.",
   "O vértice cai por volta do meio do ano (cerca do mês $6$). A única proposta cujo período de intensificação engloba esse mês de pico é a terceira opção apresentada. Logo a proposta escolhida foi a **III**."
  ],
  "2022-159-pt": [
@@ -4040,7 +4040,7 @@
   "O cálculo leva a um valor de $N$ entre 48 dB e 55 dB (som moderado). Esse intervalo corresponde à medida preventiva II. Logo, o funcionário deve adotar a **medida preventiva II**."
  ],
  "2023-153-pt": [
-  "O tempo de espera de cada caixa é o tempo de atender uma pessoa multiplicado pelo número de pessoas na fila à frente: $\\text{espera}=\\text{tempo de atendimento}\\times\\text{nº de pessoas na fila}$. Calcule esse produto para cada caixa e escolha o menor.",
+  "O tempo de espera de cada caixa é o tempo de atender uma pessoa multiplicado pelo número de pessoas na fila à frente: $\\text{espera}=\\text{tempo de atendimento}\\times\\text{n}^{\\circ}\\ \\text{de pessoas na fila}$. Calcule esse produto para cada caixa e escolha o menor.",
   "Faça as contas: Caixa I: $12\\times5=60$; Caixa II: $6\\times9=54$; Caixa III: $5\\times6=30$; Caixa IV: $15\\times2=30$; Caixa V: $9\\times3=27$ minutos.",
   "Comparando 60, 54, 30, 30 e 27 minutos, o menor tempo de espera é 27 minutos, no Caixa V. Logo, o cliente deve escolher o **Caixa V**."
  ],
@@ -4075,7 +4075,7 @@
   "A população atinge 1 000 000 de larvas em 12 dias. Logo, o produto X deve ser aplicado **12 dias** após o início do método."
  ],
  "2023-160-pt": [
-  "A senha mais difícil de adivinhar é a que tem MAIS combinações possíveis, ou seja, MENOR probabilidade de ser acertada na primeira tentativa ($p=\\frac{1}{\\text{nº de combinações}}$). Conte o total de caracteres permitidos: $10+26+26+6=68$ tipos. Quanto mais posições e mais opções por posição, mais combinações.",
+  "A senha mais difícil de adivinhar é a que tem MAIS combinações possíveis, ou seja, MENOR probabilidade de ser acertada na primeira tentativa ($p=\\frac{1}{\\text{n}^{\\circ}\\ \\text{de combinações}}$). Conte o total de caracteres permitidos: $10+26+26+6=68$ tipos. Quanto mais posições e mais opções por posição, mais combinações.",
   "Estime o número de combinações de cada tipo multiplicando as opções de cada posição (caracteres distintos). Tipo I: 4 caracteres quaisquer ($68\\times67\\times66\\times65$). Tipo II: 5 caracteres (3 letras, 1 algarismo, 1 especial). Tipo III: 6 caracteres (2 letras, 2 algarismos, 2 especiais). Mais posições tende a gerar mais combinações, mas os algarismos (só 10) e especiais (só 6) reduzem bastante as opções nos tipos II e III.",
   "Calculando, o tipo I tem o MAIOR número de combinações, depois o II, e o III o menor número de combinações entre eles. Como mais combinações significa menor probabilidade, fica $p_1<p_2<p_3$: a senha mais segura é a do **tipo I, porque $p_1<p_2<p_3$**."
  ],
