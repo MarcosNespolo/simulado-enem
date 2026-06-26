@@ -26,6 +26,7 @@ import { tagQuestion } from "@/lib/topics";
 import { hintsFor, MAX_HINTS } from "@/lib/hints";
 import { CONTEUDOS, promptAprofundar } from "@/data/conteudos";
 import { Markdown } from "@/components/Markdown";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 const LETTERS: Letter[] = ["A", "B", "C", "D", "E"];
 
@@ -841,6 +842,7 @@ export default function QuizClient() {
             >
               <LayoutGrid className="h-4 w-4" aria-hidden />
             </button>
+            <ThemeToggle />
             <button
               type="button"
               onClick={() => setConfirmOpen(true)}
