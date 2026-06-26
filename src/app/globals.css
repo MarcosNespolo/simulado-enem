@@ -259,6 +259,48 @@ body {
   text-decoration-color: var(--color-zinc-300);
 }
 
+/*
+ * Dicas (markdown + LaTeX). Resolução guiada num texto curto: precisa de
+ * respiro entre as frases/fórmulas e o KaTeX precisa herdar a cor do tema
+ * (senão fica preto fixo, sem seguir o modo noturno) e casar o tamanho com
+ * o texto ao redor (o padrão do KaTeX, 1.21em, destoa).
+ */
+.hint-content {
+  font-size: 0.9375rem;
+  line-height: 1.75;
+  color: var(--color-zinc-700);
+  overflow-wrap: break-word;
+}
+
+.hint-content > :first-child {
+  margin-top: 0;
+}
+
+.hint-content p {
+  margin: 0.6rem 0 0;
+}
+
+.hint-content strong {
+  font-weight: 600;
+  color: var(--color-zinc-900);
+}
+
+.hint-content .katex {
+  font-size: 1.05em;
+  color: inherit;
+}
+
+.hint-content .katex-display {
+  margin: 0.75rem 0;
+  padding: 0.1rem 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.hint-content .katex-display > .katex {
+  white-space: normal;
+}
+
 /* Entrada suave da questão ao navegar */
 @keyframes question-in {
   from {
