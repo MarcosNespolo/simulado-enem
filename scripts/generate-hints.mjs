@@ -1,38 +1,61 @@
 /**
- * Gera 3 dicas específicas por questão usando a API da Anthropic e salva em
- * src/data/question-hints.json (usado por src/lib/hints.ts no lugar das
- * dicas heurísticas).
+ * Gera 3 dicas progressivas por questão usando a API da Anthropic e salva em
+ * src/data/question-hints.json (usado por src/lib/hints.ts no lugar das dicas
+ * heurísticas).
+ *
+ * As 3 dicas formam uma RESOLUÇÃO guiada (passo a passo até a resposta), em
+ * Markdown + LaTeX. O site renderiza LaTeX via KaTeX (ver src/components/Markdown.tsx).
  *
  * Uso:
  *   ANTHROPIC_API_KEY=sk-... node scripts/generate-hints.mjs           # todas
  *   ANTHROPIC_API_KEY=sk-... node scripts/generate-hints.mjs 2023      # um ano
  *   ANTHROPIC_API_KEY=sk-... node scripts/generate-hints.mjs --limit 50
+ *   HINTS_MODEL=claude-haiku-4-5 ANTHROPIC_API_KEY=sk-... node scripts/generate-hints.mjs
  *
  * - Retoma de onde parou (pula ids já presentes no JSON) e salva a cada lote.
- * - Modelo: claude-haiku-4-5. Custo estimado para as ~850 questões: poucos
- *   dólares (entrada ~1k tokens e saída ~250 tokens por questão).
+ * - Modelo padrão: claude-sonnet-4-6 (cálculos de matemática mais confiáveis).
+ *   Override via HINTS_MODEL. Custo estimado p/ ~850 questões: ~US$ 9 no sonnet,
+ *   ~US$ 3 no haiku.
  */
 
 import fs from "node:fs/promises";
 import path from "node:path";
 
 const API_KEY = process.env.ANTHROPIC_API_KEY;
-const MODEL = "claude-haiku-4-5";
+const MODEL = process.env.HINTS_MODEL || "claude-sonnet-4-6";
 const DATA_DIR = path.join(process.cwd(), "src", "data", "questions");
 const OUT_FILE = path.join(process.cwd(), "src", "data", "question-hints.json");
 const SAVE_EVERY = 20;
 const DELAY_MS = 300;
 
-const SYSTEM = `Você cria dicas pedagógicas para questões do ENEM. Para cada questão (enunciado, alternativas e gabarito), escreva EXATAMENTE 3 dicas progressivas e específicas daquela questão, em português:
+const SYSTEM = String.raw`Você é um professor paciente. Para cada questão do ENEM (enunciado, alternativas e gabarito), crie uma RESOLUÇÃO guiada dividida em EXATAMENTE 3 dicas progressivas. Juntas, as 3 dicas formam o passo a passo que leva o aluno até a resposta correta, como um professor resolvendo no quadro.
 
-1. PRIMEIRA dica: reformule o que a questão realmente pede e aponte em que parte do enunciado/figura prestar atenção, ou qual conceito aplicar. NÃO indique nenhuma alternativa.
-2. SEGUNDA dica: avance no raciocínio: o caminho de resolução (o cálculo a montar, a relação a perceber, o trecho que sustenta a resposta), sem citar letras de alternativas.
-3. TERCEIRA dica: praticamente entregue a resposta: conclua o raciocínio de forma que o aluno consiga identificar a alternativa correta sozinho. NÃO diga a letra (ex.: não escreva "a resposta é a C"), mas pode parafrasear o conteúdo da resposta correta.
+Quem vai ler são alunos do ensino médio. Escreva de forma MUITO clara, simples e direta.
 
-Regras:
-- Cada dica tem 1 a 3 frases, direta e didática.
-- Nunca mencione letras de alternativas (A, B, C, D, E) em nenhuma dica.
-- Responda APENAS com JSON válido: {"d1":"...","d2":"...","d3":"..."}`;
+As 3 dicas, nesta ordem:
+1) POR ONDE COMEÇAR: explique com suas palavras o que a questão pede e qual é a ideia, fórmula ou raciocínio para começar. Em matemática, mostre a fórmula ou a relação principal. Em interpretação/humanas, diga exatamente o que procurar no texto.
+2) MONTANDO A SOLUÇÃO: dê o próximo passo concreto. Em matemática, identifique os valores e monte a conta (substitua na fórmula). Em interpretação, cite o trecho-chave e explique o que ele mostra.
+3) CHEGANDO NA RESPOSTA: termine o cálculo ou o raciocínio até o resultado final, de um jeito que o aluno consiga identificar sozinho a alternativa correta. Pode reescrever com outras palavras o conteúdo da resposta certa.
+
+REGRAS:
+- RESOLVA a questão de verdade, com os números e o raciocínio reais. NÃO dê conselhos genéricos como "releia o enunciado", "preste atenção" ou "elimine alternativas".
+- NUNCA mencione letras de alternativas (A, B, C, D ou E).
+- Cada dica tem de 1 a 4 frases. Em matemática, inclua as contas.
+
+FORMATAÇÃO (o site renderiza Markdown + LaTeX):
+- Escreva as expressões matemáticas em LaTeX. Use $...$ para fórmulas no meio da frase e $$...$$ (em uma linha só, separada) para fórmulas em destaque.
+  Exemplo: $$x = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a}$$
+- Use \frac{}{} para fração, ^{} para potência, \sqrt{} para raiz, \times para multiplicação, \% para porcentagem.
+- Para dinheiro, escreva o cifrão SEMPRE escapado como R\$ (com a barra invertida). Exemplo: R\$ 2.000,00. Nunca escreva R$ sem a barra, porque quebra a renderização.
+- Pode usar **negrito** para destacar o resultado final.
+
+Responda EXATAMENTE neste formato, sem mais nada antes ou depois:
+===DICA1===
+(texto da dica 1)
+===DICA2===
+(texto da dica 2)
+===DICA3===
+(texto da dica 3)`;
 
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -51,7 +74,17 @@ ${alternativas}
 
 GABARITO: ${q.correctAlternative}
 
-Gere as 3 dicas progressivas em JSON.`;
+Gere as 3 dicas progressivas no formato pedido.`;
+}
+
+function parseHints(text) {
+  const m = text.match(
+    /===\s*DICA\s*1\s*===([\s\S]*?)===\s*DICA\s*2\s*===([\s\S]*?)===\s*DICA\s*3\s*===([\s\S]*)/i
+  );
+  if (!m) throw new Error(`Resposta fora do formato: ${text.slice(0, 120)}`);
+  const dicas = [m[1].trim(), m[2].trim(), m[3].trim()];
+  if (dicas.some((d) => !d)) throw new Error("Dica vazia");
+  return dicas;
 }
 
 async function generateFor(q, attempt = 1) {
@@ -64,7 +97,7 @@ async function generateFor(q, attempt = 1) {
     },
     body: JSON.stringify({
       model: MODEL,
-      max_tokens: 600,
+      max_tokens: 1500,
       system: SYSTEM,
       messages: [{ role: "user", content: buildPrompt(q) }],
     }),
@@ -79,11 +112,7 @@ async function generateFor(q, attempt = 1) {
 
   const data = await res.json();
   const text = data.content?.[0]?.text ?? "";
-  const match = text.match(/\{[\s\S]*\}/);
-  if (!match) throw new Error(`Resposta sem JSON: ${text.slice(0, 120)}`);
-  const parsed = JSON.parse(match[0]);
-  if (!parsed.d1 || !parsed.d2 || !parsed.d3) throw new Error("JSON incompleto");
-  return [String(parsed.d1), String(parsed.d2), String(parsed.d3)];
+  return parseHints(text);
 }
 
 async function main() {
@@ -114,6 +143,7 @@ async function main() {
   }
 
   const pending = questions.filter((q) => !hints[q.id]).slice(0, limit);
+  console.log(`Modelo: ${MODEL}`);
   console.log(`Total: ${questions.length} questões; já geradas: ${questions.length - pending.length}; pendentes nesta execução: ${pending.length}\n`);
 
   let done = 0;
