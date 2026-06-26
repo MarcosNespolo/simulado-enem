@@ -23,7 +23,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#101014",
+  themeColor: "#fafafa",
 };
 
 export default function RootLayout({
@@ -39,9 +39,10 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col bg-zinc-50 text-zinc-900">
         <script
-          // Aplica o tema salvo antes do primeiro paint para evitar flash.
+          // Tema claro é o padrão; aplica a classe "dark" antes do primeiro
+          // paint só se o aluno tiver escolhido o modo escuro (evita flash).
           dangerouslySetInnerHTML={{
-            __html: `try{if(localStorage.getItem("simulado-enem:theme")==="light")document.documentElement.classList.add("light")}catch(e){}`,
+            __html: `try{if(localStorage.getItem("simulado-enem:theme")==="dark")document.documentElement.classList.add("dark")}catch(e){}`,
           }}
         />
         {children}
