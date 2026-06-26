@@ -25,7 +25,7 @@ export function Markdown({
     <div className={className}>
       <ReactMarkdown
         remarkPlugins={math ? [remarkGfm, remarkMath] : [remarkGfm]}
-        rehypePlugins={math ? [rehypeKatex] : []}
+        rehypePlugins={math ? [[rehypeKatex, { strict: "ignore", throwOnError: false }]] : []}
         components={{
           img: ({ src, alt }) => (
             // eslint-disable-next-line @next/next/no-img-element
