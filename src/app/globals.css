@@ -262,7 +262,6 @@ body {
 .hint-content {
   font-size: 0.9375rem;
   line-height: 1.75;
-  color: var(--color-zinc-700);
   overflow-wrap: break-word;
 }
 
